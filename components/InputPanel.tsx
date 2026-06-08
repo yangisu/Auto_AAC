@@ -33,7 +33,7 @@ export function InputPanel({
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Teacher workspace</p>
-          <h1 id="input-panel-title">Auto AAC 검토 도구</h1>
+          <h1 id="input-panel-title">Auto AAC - 실시간 AAC 자동 생성 도구</h1>
         </div>
         <span className="status-pill status-pill-blue">초안 생성</span>
       </div>
