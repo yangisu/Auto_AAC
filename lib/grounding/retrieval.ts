@@ -43,16 +43,22 @@ export interface GroundingResult {
   detectedNeeds: string[];
 }
 
+export function retrieveDefaultStyleProfile(): AacStyleProfile {
+  return styleProfile as AacStyleProfile;
+}
+
 export function retrieveGrounding(
-  studentProfile: StudentProfile,
+  studentProfile: StudentProfile | string,
   scienceText: string,
 ): GroundingResult {
-  const { rules, detectedNeeds } = selectSpecialEducationRules(studentProfile);
+  const profile =
+    typeof studentProfile === "string" ? { description: studentProfile } : studentProfile;
+  const { rules, detectedNeeds } = selectSpecialEducationRules(profile);
 
   return {
     curriculumContexts: selectCurriculumContexts(scienceText),
     specialEducationRules: rules,
-    styleProfile: styleProfile as AacStyleProfile,
+    styleProfile: retrieveDefaultStyleProfile(),
     extractedKeywords: extractScienceKeywords(scienceText),
     detectedNeeds,
   };
