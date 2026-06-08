@@ -125,7 +125,7 @@ OPENAI_API_KEY=새로 발급한 안전한 키
 
 ## AAC 스타일 프로필
 
-`data/aac_style_profile.json`은 첨부 예시 이미지에서 추출한 시각 규칙을 보관합니다.
+`data/aac_style_profile.json`은 팀원들이 제작한 AAC 예시 이미지에서 추출한 시각 규칙을 보관합니다.
 
 - 흰 배경
 - 두꺼운 검은 윤곽선
@@ -136,7 +136,7 @@ OPENAI_API_KEY=새로 발급한 안전한 키
 - 한 이미지에 한 개념
 - 글자, 말풍선, 복잡한 배경 금지
 
-이 앱은 이미지 생성 모델을 파인튜닝했다고 주장하지 않습니다. 대신 참조 스타일을 규칙화한 prompt/style-conditioned image generation 구조입니다.
+이 앱은 이미지 생성 모델에 사용할 참조 스타일을 규칙화한 prompt/style-conditioned image generation 구조입니다.
 
 ## API
 
