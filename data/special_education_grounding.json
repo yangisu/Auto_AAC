@@ -5,61 +5,403 @@
       "id": "no-text-low-reading",
       "need": "low_reading_level",
       "title": "Low reading level or limited literacy",
-      "profileFields": ["readingLevel", "reading_level", "literacy", "communication", "aacLevel"],
-      "cues": ["읽기 어려움", "글자", "문해", "저학년", "낮음", "초급", "비문해", "low", "limited", "emergent", "pre-reader"],
+      "profileFields": [
+        "readingLevel",
+        "reading_level",
+        "literacy",
+        "communication",
+        "aacLevel"
+      ],
+      "cues": [
+        "읽기 어려움",
+        "글자",
+        "문해",
+        "저학년",
+        "낮음",
+        "초급",
+        "비문해",
+        "low",
+        "limited",
+        "emergent",
+        "pre-reader"
+      ],
       "guidance": [
         "Do not include written labels, captions, letters, numbers, or speech bubbles.",
         "Use concrete objects and visible actions instead of symbolic text."
       ],
-      "promptConstraints": ["no text", "concrete visual vocabulary", "avoid labels"]
+      "promptConstraints": [
+        "no text",
+        "concrete visual vocabulary",
+        "avoid labels"
+      ],
+      "sourceBasis": [
+        "ASHA AAC: symbol type, display features, language/literacy level should be individualized."
+      ],
+      "cardPlanningActions": [
+        "Prefer picture/object symbols over printed labels.",
+        "Keep Korean sentence editable for teacher but out of generated image."
+      ]
     },
     {
       "id": "single-focus-short-attention",
       "need": "short_attention",
       "title": "Short attention span",
-      "profileFields": ["attention", "focus", "behavior", "engagement"],
-      "cues": ["주의", "집중", "짧", "산만", "주의집중", "adhd", "short", "distract", "limited attention"],
+      "profileFields": [
+        "attention",
+        "focus",
+        "behavior",
+        "engagement"
+      ],
+      "cues": [
+        "주의",
+        "집중",
+        "짧",
+        "산만",
+        "주의집중",
+        "adhd",
+        "short",
+        "distract",
+        "limited attention"
+      ],
       "guidance": [
         "Show one concept and one main object per card.",
         "Remove decorative background details and competing secondary actions."
       ],
-      "promptConstraints": ["one concept only", "minimal details", "high figure-ground contrast"]
+      "promptConstraints": [
+        "one concept only",
+        "minimal details",
+        "high figure-ground contrast"
+      ],
+      "sourceBasis": [
+        "CAST UDL: representation and engagement should reduce barriers for learner variability."
+      ],
+      "cardPlanningActions": [
+        "Remove secondary actions.",
+        "Use one focal noun and one focal verb per card."
+      ]
     },
     {
       "id": "arrow-cause-effect",
       "need": "cause_effect_support",
       "title": "Cause-effect support",
-      "profileFields": ["causeEffect", "cause_effect", "reasoning", "cognition", "learningNeeds"],
-      "cues": ["원인", "결과", "인과", "때문", "왜", "연결", "cause", "effect", "causal", "because"],
+      "profileFields": [
+        "causeEffect",
+        "cause_effect",
+        "reasoning",
+        "cognition",
+        "learningNeeds"
+      ],
+      "cues": [
+        "원인",
+        "결과",
+        "인과",
+        "때문",
+        "왜",
+        "연결",
+        "cause",
+        "effect",
+        "causal",
+        "because"
+      ],
       "guidance": [
         "Represent cause and effect with a single thick arrow from cause to result.",
         "Use before-after or input-output structure when the science concept changes state."
       ],
-      "promptConstraints": ["single arrow", "clear cause-to-effect direction", "before-after if needed"]
+      "promptConstraints": [
+        "single arrow",
+        "clear cause-to-effect direction",
+        "before-after if needed"
+      ],
+      "sourceBasis": [
+        "WWC learning guide: connect abstract and concrete representations and combine graphics with verbal descriptions."
+      ],
+      "cardPlanningActions": [
+        "Split cause and result into neighboring cards.",
+        "Use one arrow from cause to effect."
+      ]
     },
     {
       "id": "concretize-abstract-science",
       "need": "abstract_concept_support",
       "title": "Abstract concept support",
-      "profileFields": ["abstractConcepts", "abstract_concepts", "cognition", "conceptualUnderstanding", "learningNeeds"],
-      "cues": ["추상", "개념", "상징", "보이지", "어려움", "abstract", "symbolic", "invisible", "concept"],
+      "profileFields": [
+        "abstractConcepts",
+        "abstract_concepts",
+        "cognition",
+        "conceptualUnderstanding",
+        "learningNeeds"
+      ],
+      "cues": [
+        "추상",
+        "개념",
+        "상징",
+        "보이지",
+        "어려움",
+        "abstract",
+        "symbolic",
+        "invisible",
+        "concept"
+      ],
       "guidance": [
         "Anchor invisible science ideas in familiar visible examples, such as leaves, water drops, sun, magnets, arrows, or simple particles.",
         "Avoid metaphors that require extra background knowledge."
       ],
-      "promptConstraints": ["concrete example", "visible referent", "avoid metaphor"]
+      "promptConstraints": [
+        "concrete example",
+        "visible referent",
+        "avoid metaphor"
+      ],
+      "sourceBasis": [
+        "WWC learning guide: connect abstract representations with concrete representations."
+      ],
+      "cardPlanningActions": [
+        "Map invisible science terms to visible anchors.",
+        "Prefer familiar classroom objects."
+      ]
     },
     {
       "id": "emotionally-neutral-predictable",
       "need": "emotional_behavior_support",
       "title": "Emotional and behavioral support",
-      "profileFields": ["emotionalBehaviorNeeds", "emotional_behavior_needs", "behavior", "sensory", "regulation"],
-      "cues": ["불안", "좌절", "분노", "회피", "과민", "감정", "행동", "anxiety", "frustration", "meltdown", "avoidance", "sensory"],
+      "profileFields": [
+        "emotionalBehaviorNeeds",
+        "emotional_behavior_needs",
+        "behavior",
+        "sensory",
+        "regulation"
+      ],
+      "cues": [
+        "불안",
+        "좌절",
+        "분노",
+        "회피",
+        "과민",
+        "감정",
+        "행동",
+        "anxiety",
+        "frustration",
+        "meltdown",
+        "avoidance",
+        "sensory"
+      ],
       "guidance": [
         "Use calm, predictable layouts with friendly neutral facial expressions only when a face is necessary.",
         "Avoid danger, clutter, exaggerated emotion, punishment imagery, or startling motion cues."
       ],
-      "promptConstraints": ["calm layout", "neutral affect", "avoid threat imagery"]
+      "promptConstraints": [
+        "calm layout",
+        "neutral affect",
+        "avoid threat imagery"
+      ],
+      "sourceBasis": [
+        "Visual supports evidence: visual supports clarify routines, transitions, academics, and behavior expectations."
+      ],
+      "cardPlanningActions": [
+        "Use predictable sequence order.",
+        "Avoid startling emotion or threat imagery."
+      ]
+    },
+    {
+      "id": "single-clause-receptive-language",
+      "need": "receptive_language_single_clause",
+      "title": "Receptive language support with one-clause Korean sentences",
+      "profileFields": [
+        "receptiveLanguage",
+        "receptive_language",
+        "languageComprehension",
+        "communication",
+        "description"
+      ],
+      "cues": [
+        "수용언어",
+        "긴 문장",
+        "문장을 어려워",
+        "복문",
+        "절",
+        "이해하기 어려움",
+        "말 이해",
+        "single clause",
+        "receptive",
+        "sentence comprehension"
+      ],
+      "guidance": [
+        "Use one independent clause per card and avoid embedded clauses or conditional clauses.",
+        "Prefer Korean subject-object-verb card text such as “잎이 햇빛을 받는다.” and avoid two verbs in one sentence."
+      ],
+      "promptConstraints": [
+        "one clause",
+        "one verb phrase",
+        "subject-object-verb Korean sentence",
+        "no embedded clause"
+      ],
+      "cardPlanningActions": [
+        "Choose one subject, one object, and one predicate from curriculum decomposition hints.",
+        "If the source has two verbs, split it into two cards."
+      ],
+      "sourceBasis": [
+        "CAST UDL: language/symbol representation and comprehension supports.",
+        "ASHA AAC: receptive language and command-following are part of AAC assessment."
+      ]
+    },
+    {
+      "id": "working-memory-three-to-four-steps",
+      "need": "working_memory_step_limit",
+      "title": "Working-memory load limit",
+      "profileFields": [
+        "workingMemory",
+        "working_memory",
+        "cognition",
+        "attention",
+        "description"
+      ],
+      "cues": [
+        "작업기억",
+        "기억 부담",
+        "동시에",
+        "두 가지",
+        "순서 기억",
+        "처리하기 어려움",
+        "working memory",
+        "memory load",
+        "multi-step"
+      ],
+      "guidance": [
+        "Keep the storyboard to three or four cards and make each card independently understandable.",
+        "Do not require the student to remember hidden information from a previous card to understand the next card."
+      ],
+      "promptConstraints": [
+        "max four cards",
+        "one new idea per step",
+        "repeat key noun when needed"
+      ],
+      "cardPlanningActions": [
+        "Repeat the science subject across adjacent cards when the object changes.",
+        "Avoid pronouns like 이것/그것 if the referent may be unclear."
+      ],
+      "sourceBasis": [
+        "ASHA AAC: cognitive communication assessment includes memory, attention, problem-solving, and executive skills.",
+        "WWC: combine graphics with verbal descriptions for key processes."
+      ]
+    },
+    {
+      "id": "visual-discrimination-clean-field",
+      "need": "visual_discrimination_support",
+      "title": "Visual discrimination and figure-ground support",
+      "profileFields": [
+        "vision",
+        "visualDiscrimination",
+        "visual_discrimination",
+        "sensory",
+        "description"
+      ],
+      "cues": [
+        "시각 변별",
+        "그림이 많",
+        "복잡한 그림",
+        "작은 그림",
+        "시각 단서",
+        "배경",
+        "visual discrimination",
+        "field size",
+        "visual clutter"
+      ],
+      "guidance": [
+        "Use a clean white field, a single focal object, high contrast, and generous spacing.",
+        "Avoid grids, multiple competing symbols, decorative backgrounds, and tiny details."
+      ],
+      "promptConstraints": [
+        "clean field",
+        "large focal object",
+        "high contrast",
+        "no visual clutter"
+      ],
+      "cardPlanningActions": [
+        "Use one object/action per image prompt.",
+        "Prefer large centered symbols and thick outlines."
+      ],
+      "sourceBasis": [
+        "ASHA AAC: symbol size, field size, visual acuity, and sensory status should guide display design.",
+        "Visual supports evidence: visuals clarify environments, instructions, academics, and behavior."
+      ]
+    },
+    {
+      "id": "predictable-transition-sequence",
+      "need": "transition_predictability",
+      "title": "Predictable sequence for transition or emotional regulation needs",
+      "profileFields": [
+        "transition",
+        "emotionalBehaviorNeeds",
+        "emotional_behavior_needs",
+        "behavior",
+        "regulation",
+        "description"
+      ],
+      "cues": [
+        "전환",
+        "변화",
+        "예측",
+        "불안",
+        "루틴",
+        "다음",
+        "순서",
+        "transition",
+        "predictable",
+        "routine",
+        "anxiety"
+      ],
+      "guidance": [
+        "Use a stable first-next-then sequence and keep card layout consistent.",
+        "Avoid surprise outcomes; show what changes before showing the result."
+      ],
+      "promptConstraints": [
+        "first-next-then sequence",
+        "consistent layout",
+        "preview result after cause"
+      ],
+      "cardPlanningActions": [
+        "Order cards as input, action/change, result.",
+        "Keep border and visual style consistent across all cards."
+      ],
+      "sourceBasis": [
+        "ASHA ID: activity schedules and visual supports can help individuals complete sequences, attend to tasks, and transition between activities.",
+        "CAST UDL: engagement includes sustaining effort and self-regulation."
+      ]
+    },
+    {
+      "id": "core-vocabulary-science-reuse",
+      "need": "core_vocabulary_reuse",
+      "title": "Core vocabulary reuse for AAC consistency",
+      "profileFields": [
+        "aacLevel",
+        "communication",
+        "vocabulary",
+        "description"
+      ],
+      "cues": [
+        "aac",
+        "핵심어휘",
+        "상징",
+        "의사소통판",
+        "반복",
+        "core vocabulary",
+        "symbol consistency"
+      ],
+      "guidance": [
+        "Reuse stable high-frequency Korean predicates such as 받는다, 간다, 만든다, 바뀐다, 먹는다, 돈다.",
+        "Keep the same concept visually similar across regenerated cards."
+      ],
+      "promptConstraints": [
+        "reuse simple predicates",
+        "stable symbol meaning",
+        "avoid rare vocabulary"
+      ],
+      "cardPlanningActions": [
+        "Prefer curriculum cardSentenceFrames over novel paraphrases.",
+        "Use the same noun for the same science object across cards."
+      ],
+      "sourceBasis": [
+        "ASHA AAC: core vocabulary supports multiple communicative functions and symbol organization may minimize memory and motor-planning demands."
+      ]
     }
   ]
 }

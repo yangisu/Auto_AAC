@@ -8,6 +8,14 @@ export interface CurriculumSeedContext {
   keywords: string[];
   promptGuidance: string[];
   aacSupports: string[];
+  sentenceDecomposition: {
+    subjectCandidates: string[];
+    objectCandidates: string[];
+    predicateCandidates: string[];
+    concreteAnchors: string[];
+    causeEffectCues: string[];
+  };
+  cardSentenceFrames: string[];
 }
 
 interface CurriculumSeedPack {
