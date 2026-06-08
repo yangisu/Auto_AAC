@@ -3,10 +3,12 @@ import { z } from "zod";
 export const GenerateRequestSchema = z.object({
   studentProfile: z.string().trim().min(5),
   scienceText: z.string().trim().min(3),
+  requestedStepCount: z.number().int().min(1).max(4).default(1),
 });
 
 export const RegenerateImageRequestSchema = z.object({
   imagePrompt: z.string().trim().min(10),
+  revisionInstruction: z.string().trim().max(500).optional(),
 });
 
 export const StudentAnalysisSchema = z.object({
@@ -23,7 +25,7 @@ export const AacStepSchema = z.object({
 export const AacStructuredOutputSchema = z.object({
   topic: z.string(),
   student_analysis: StudentAnalysisSchema,
-  steps: z.array(AacStepSchema).min(3).max(4),
+  steps: z.array(AacStepSchema).min(1).max(4),
   curriculum_links: z.array(z.string()),
   special_education_rules_used: z.array(z.string()),
   teacher_review_required: z.boolean(),
@@ -35,7 +37,7 @@ export const AacStepWithImageSchema = AacStepSchema.extend({
 });
 
 export const AacGenerateResponseSchema = AacStructuredOutputSchema.extend({
-  steps: z.array(AacStepWithImageSchema).min(3).max(4),
+  steps: z.array(AacStepWithImageSchema).min(1).max(4),
   grounding_debug: z.object({
     extracted_keywords: z.array(z.string()),
     detected_needs: z.array(z.string()),

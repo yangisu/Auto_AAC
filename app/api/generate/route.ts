@@ -62,7 +62,8 @@ export async function POST(request: Request) {
           role: "user",
           content: buildUserPrompt(
             input.data.studentProfile,
-            input.data.scienceText
+            input.data.scienceText,
+            input.data.requestedStepCount
           ),
         },
       ],

@@ -152,6 +152,14 @@ h2 {
   min-height: 96px;
 }
 
+.revision-editor {
+  margin-top: 10px;
+}
+
+.revision-editor textarea {
+  min-height: 74px;
+}
+
 .text-field textarea:focus,
 .card-editor textarea:focus {
   border-color: var(--blue);
@@ -163,6 +171,45 @@ h2 {
   align-items: center;
   gap: 12px;
   margin-top: 12px;
+}
+
+.count-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+}
+
+.count-control span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.count-control strong {
+  min-width: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.step-count-button {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--blue);
+  background: var(--blue-soft);
+  border: 2px solid var(--blue);
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .primary-button,
@@ -525,8 +572,13 @@ h2 {
 
   .primary-button,
   .secondary-button,
-  .icon-button {
+  .icon-button,
+  .count-control {
     width: 100%;
+  }
+
+  .count-control {
+    justify-content: space-between;
   }
 
   .style-note {

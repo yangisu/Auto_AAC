@@ -35,6 +35,7 @@ async function readError(response: Response) {
 export default function Home() {
   const [studentProfile, setStudentProfile] = useState("");
   const [scienceText, setScienceText] = useState("");
+  const [requestedStepCount, setRequestedStepCount] = useState(1);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [steps, setSteps] = useState<StoryboardStep[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +54,11 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ studentProfile, scienceText }),
+        body: JSON.stringify({
+          studentProfile,
+          scienceText,
+          requestedStepCount,
+        }),
       });
 
       if (!response.ok) {
@@ -78,6 +83,14 @@ export default function Home() {
     setSteps((current) =>
       current.map((step, stepIndex) =>
         stepIndex === index ? { ...step, simplified_text: value } : step
+      )
+    );
+  }
+
+  function handleRevisionInstructionChange(index: number, value: string) {
+    setSteps((current) =>
+      current.map((step, stepIndex) =>
+        stepIndex === index ? { ...step, revision_instruction: value } : step
       )
     );
   }
@@ -115,7 +128,10 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ imagePrompt: targetStep.image_prompt }),
+        body: JSON.stringify({
+          imagePrompt: targetStep.image_prompt,
+          revisionInstruction: targetStep.revision_instruction,
+        }),
       });
 
       if (!response.ok) {
@@ -154,10 +170,12 @@ export default function Home() {
           <InputPanel
             studentProfile={studentProfile}
             scienceText={scienceText}
+            requestedStepCount={requestedStepCount}
             isLoading={isLoading}
             error={error}
             onStudentProfileChange={setStudentProfile}
             onScienceTextChange={setScienceText}
+            onRequestedStepCountChange={setRequestedStepCount}
             onGenerate={handleGenerate}
           />
 
@@ -176,6 +194,7 @@ export default function Home() {
           regeneratingStep={regeneratingStep}
           regenerateErrors={regenerateErrors}
           onTextChange={handleTextChange}
+          onRevisionInstructionChange={handleRevisionInstructionChange}
           onRegenerateImage={handleRegenerateImage}
           onDelete={handleDelete}
         />

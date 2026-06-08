@@ -42,9 +42,12 @@ export async function POST(request: Request) {
   try {
     const openai = getOpenAIClient();
     const styleProfile = retrieveDefaultStyleProfile();
-    const prompt = input.data.imagePrompt.includes("Custom AAC Style Profile")
+    const basePrompt = input.data.imagePrompt.includes("Custom AAC Style Profile")
       ? input.data.imagePrompt
       : buildImagePrompt(input.data.imagePrompt, styleProfile);
+    const prompt = input.data.revisionInstruction
+      ? `${basePrompt}\nTeacher revision direction: ${input.data.revisionInstruction}\nKeep the same AAC style profile and one-concept rule.`
+      : basePrompt;
 
     const image = await openai.images.generate({
       model: imageModel,

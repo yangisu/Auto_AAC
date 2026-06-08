@@ -1,125 +1,237 @@
 # Auto_AAC
 
-Auto_AAC is an MVP tool for converting Korean curriculum content into teacher-reviewable AAC card sequences for special-education classrooms. It is an AAC conversion tool, not a summarizer: the goal is to transform lesson material into accessible communication cards while preserving the curriculum intent.
+Auto_AAC는 과학 수업 원문을 특수교육 대상 학생이 이해하기 쉬운 AAC 카드 초안으로 변환하는 MVP 도구입니다. 일반 요약기가 아니라, 교사가 입력한 과학 개념을 학생 특성에 맞춰 “검토 가능한 AAC 카드 묶음”으로 바꾸는 교사용 제작 보조 도구입니다.
 
-## MVP Scope
+## 핵심 목표
 
-- Convert teacher-provided curriculum text into a sequential AAC card draft.
-- Dynamically analyze the selected student profile before generation, including communication level, reading load, behavioral/emotional support needs, preferred AAC style, and classroom context.
-- Retrieve relevant curriculum grounding from static JSON curriculum data using retrieval-like selection, then use the selected material as generation context.
-- Generate clear AAC symbols with the OpenAI Images API.
-- Keep a human-in-the-loop workflow: teachers review, edit, approve, or reject generated cards before classroom use.
+- 교사가 학생 프로필과 과학 원문을 입력합니다.
+- 시스템은 교육과정 grounding과 특수교육 grounding을 함께 적용합니다.
+- 교사가 원하는 AAC 카드 수를 1-4개 중 선택합니다.
+- 각 카드는 짧은 한국어 문장, AAC 이미지, 수정 방향 입력 칸을 가집니다.
+- 생성 결과는 최종 정답이 아니라 `교사용 검토 초안`입니다.
 
-## How It Works
+## 배포 사이트에서 바로 작동하는 조건
 
-1. A teacher enters a natural-language student profile and a Korean science source text.
-2. `lib/grounding/retrieval.ts` extracts science keywords and student-support cues.
-3. The app selects relevant curriculum contexts from `data/curriculum_seed.json`.
-4. The app selects special-education rules from `data/special_education_grounding.json`.
-5. The OpenAI text model returns structured JSON with `topic`, `student_analysis`, and 3-4 AAC steps.
-6. The OpenAI Images API generates one AAC-style image for each step.
-7. The teacher reviews, edits, regenerates images, deletes cards, and decides whether the draft is usable.
+Vercel에 배포된 사이트 화면에 학생 프로필과 과학 원문을 입력하면 바로 생성 요청을 보낼 수 있습니다. 단, 실제 LLM/이미지 생성이 작동하려면 Vercel 프로젝트 설정에 다음 환경변수가 등록되어 있어야 합니다.
 
-## Special-Education Grounding
+```env
+OPENAI_API_KEY=새로 발급한 안전한 키
+```
 
-Auto_AAC generation should follow these principles:
+로컬의 `.env.local`에 키를 넣는 것은 내 컴퓨터에서만 적용됩니다. Vercel 배포 사이트는 Vercel Dashboard의 Project Settings > Environment Variables에 별도로 `OPENAI_API_KEY`를 넣고 재배포해야 합니다.
 
-- Reduce cognitive load and working-memory demand.
-- Use one concept per AAC card.
-- Prefer short Korean SOV sentences.
-- Prioritize concrete, observable concepts over abstract wording.
-- Preserve sequential flow across cards.
-- Separate cause and effect into different cards when needed.
-- Use predictable flow for students with emotional or behavioral support needs.
-- Produce clear AAC symbols that match the card concept directly.
+## 사용 흐름
 
-`data/special_education_grounding.json` now separates broad needs into more specific generation rules:
+1. `학생 프로필`에 학생의 이해 수준, 주의집중, 수용언어, 시각 단서 선호, 행동/정서 특성을 적습니다.
+2. `과학 원문`에 수업에서 다룰 과학 문장을 입력합니다.
+3. `카드 수`에서 기본 1개부터 시작해 `+` 버튼으로 필요한 AAC 카드 수를 늘립니다.
+4. `AAC n개 초안 생성`을 누릅니다.
+5. 생성된 각 AAC 카드에서 문장을 직접 수정합니다.
+6. 카드별 `재생성 수정 방향`에 원하는 그림 수정 방향을 적습니다.
+7. `수정 방향 반영 재생성`을 눌러 해당 카드 이미지를 다시 생성합니다.
+8. 필요 없는 카드는 삭제하고, 교사가 최종 검토합니다.
 
-- receptive-language support: one independent clause, one verb phrase, no embedded clauses.
-- working-memory support: 3-4 steps, one new idea per card, repeat key nouns when needed.
-- visual-discrimination support: clean field, large focal object, high contrast, no clutter.
-- transition predictability: stable first-next-then order for students who need predictable flow.
-- AAC core vocabulary reuse: stable simple predicates such as `받는다`, `간다`, `만든다`, `바뀐다`.
+## 예제 1: 광합성
 
-## Curriculum Grounding
+학생 프로필:
 
-The MVP uses static JSON curriculum data as its source of truth. At generation time, the app selects the most relevant curriculum entries in a retrieval-like step, then grounds the AAC card draft in those selected entries. This keeps outputs aligned to curriculum content without requiring a database or full search service for the MVP.
+```text
+초등학교 2학년 수준의 어휘는 이해하지만 긴 문장을 어려워함. 인과관계 파악이 어렵고 주의집중 시간이 짧음. 그림은 단순하고 큰 것이 좋음.
+```
 
-The initial pack is a reviewable MVP seed. It is designed to show explicit grounding in middle-school science concepts and special-education science support practices, but final classroom validity should be reviewed by a teacher or domain expert.
+과학 원문:
 
-Each curriculum context includes `sentenceDecomposition` and `cardSentenceFrames` so the model can split science meaning into Korean AAC card language:
+```text
+잎은 햇빛과 물을 받아 양분을 만든다.
+```
 
-- `subjectCandidates`: likely science actors, such as `잎`, `식물`, `물`, `열`.
-- `objectCandidates`: concrete objects or inputs/outputs, such as `햇빛`, `물`, `양분`.
-- `predicateCandidates`: simple predicates, such as `받는다`, `만든다`, `변한다`.
-- `concreteAnchors`: visible image anchors for abstract science terms.
-- `causeEffectCues`: cues for separating cause and result into different cards.
-- `cardSentenceFrames`: ready-to-use short Korean card sentences.
+추천 카드 수: `3`
 
-## AAC Style Profile
+예상 카드 흐름:
 
-Auto_AAC supports a custom AAC style profile in `data/aac_style_profile.json`. The current profile is derived from the provided examples: white background, thick black outlines, simple flat vector shapes, rounded card frames, blue/green borders, arrows for sequence or cause-effect, and one concept per image.
+- 잎이 햇빛을 받는다.
+- 잎이 물을 받는다.
+- 잎이 양분을 만든다.
 
-This is not model fine-tuning. It is a prompt/style-conditioned image generation pipeline that makes the MVP look and behave like it has an explicit AAC visual system without claiming a trained custom model.
+## 예제 2: 상태 변화
 
-## OpenAI Images API
+학생 프로필:
 
-The app requires an OpenAI API key to generate AAC symbols. Server-side route handlers call the OpenAI text and image APIs and must not expose secret keys to the browser.
+```text
+수용언어가 약하고 한 번에 한 가지 정보만 이해함. 작업기억 부담이 크며 변화 전과 후를 나누어 보여주면 이해가 좋아짐.
+```
 
-- `POST /api/generate`: runs grounding retrieval, structured text generation, and image generation.
-- `POST /api/regenerate-image`: regenerates a single image from an existing card image prompt.
+과학 원문:
 
-## Environment Variables
+```text
+물은 가열되면 수증기가 되고, 수증기는 차가워지면 다시 물이 된다.
+```
 
-Create `.env.local` from `.env.local.example` for local development.
+추천 카드 수: `4`
+
+예상 카드 흐름:
+
+- 물이 뜨거워진다.
+- 물이 수증기로 변한다.
+- 수증기가 차가워진다.
+- 수증기가 물로 변한다.
+
+## 예제 3: 힘과 운동
+
+학생 프로필:
+
+```text
+짧은 문장을 선호하고 추상어 이해가 어려움. 화살표와 전후 비교 그림에 잘 반응함. 전환 상황에서 불안이 있어 순서를 예측할 수 있어야 함.
+```
+
+과학 원문:
+
+```text
+힘은 물체의 운동 방향을 바꿀 수 있다.
+```
+
+추천 카드 수: `2`
+
+예상 카드 흐름:
+
+- 힘이 물체를 민다.
+- 물체의 방향이 바뀐다.
+
+## Grounding 구조
+
+### 교육과정 Grounding
+
+`data/curriculum_seed.json`은 중학교 과학 맥락을 정적 JSON으로 보관합니다. 복잡한 벡터 DB 없이 키워드 overlap 방식으로 관련 과학 맥락을 선택합니다.
+
+각 과학 맥락에는 다음 정보가 포함됩니다.
+
+- `keywords`: 과학 원문 검색용 핵심어
+- `promptGuidance`: LLM 변환 지침
+- `aacSupports`: AAC 표현 지원 방식
+- `sentenceDecomposition`: 주어, 목적어, 서술어 후보
+- `cardSentenceFrames`: 바로 사용할 수 있는 짧은 한국어 카드 문장 예시
+
+이 구조의 목표는 과학 개념을 `잎이 햇빛을 받는다.`처럼 주어-목적어-서술어 중심 단문으로 쉽게 분리하는 것입니다.
+
+### 특수교육 Grounding
+
+`data/special_education_grounding.json`은 학생 특성에 따라 적용할 변환 규칙을 세분화합니다.
+
+- 수용언어 지원: 한 카드에 독립절 하나, 서술어 하나
+- 작업기억 지원: 1-4단계, 한 카드에 새 정보 하나
+- 시각 변별 지원: 흰 배경, 큰 중심 상징, 높은 대비
+- 전환 예측성 지원: 입력, 변화, 결과 순서 유지
+- AAC 핵심어휘 재사용: `받는다`, `만든다`, `바뀐다`, `간다` 같은 단순 서술어 반복
+
+## AAC 스타일 프로필
+
+`data/aac_style_profile.json`은 첨부 예시 이미지에서 추출한 시각 규칙을 보관합니다.
+
+- 흰 배경
+- 두꺼운 검은 윤곽선
+- 단순 flat vector
+- 둥근 카드 프레임
+- 파랑/초록 테두리
+- 화살표로 순서나 원인-결과 표현
+- 한 이미지에 한 개념
+- 글자, 말풍선, 복잡한 배경 금지
+
+이 앱은 이미지 생성 모델을 파인튜닝했다고 주장하지 않습니다. 대신 참조 스타일을 규칙화한 prompt/style-conditioned image generation 구조입니다.
+
+## API
+
+### `POST /api/generate`
+
+입력:
+
+```json
+{
+  "studentProfile": "학생 특성",
+  "scienceText": "과학 원문",
+  "requestedStepCount": 1
+}
+```
+
+처리:
+
+- 교육과정 grounding 검색
+- 특수교육 규칙 선택
+- OpenAI structured output 생성
+- 각 카드 이미지 생성
+
+### `POST /api/regenerate-image`
+
+입력:
+
+```json
+{
+  "imagePrompt": "기존 이미지 프롬프트",
+  "revisionInstruction": "화살표를 더 크게 보여줘"
+}
+```
+
+처리:
+
+- 기존 AAC 스타일 프로필 유지
+- 교사의 수정 방향을 이미지 프롬프트에 반영
+- 해당 카드 이미지만 재생성
+
+## 환경변수
+
+로컬 개발에서는 `.env.local.example`을 복사해 `.env.local`을 만듭니다.
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Required:
+필수:
 
-- `OPENAI_API_KEY`: OpenAI API key used by server-side generation.
+```env
+OPENAI_API_KEY=
+```
 
-Optional:
+선택:
 
-- `OPENAI_IMAGE_MODEL`: Image generation model name.
-- `OPENAI_TEXT_MODEL`: Text model name for AAC card drafting and student-profile analysis.
-- `NEXT_PUBLIC_APP_URL`: Public app URL used in deployment-aware links.
+```env
+OPENAI_TEXT_MODEL=
+OPENAI_IMAGE_MODEL=
+NEXT_PUBLIC_APP_URL=
+```
 
-Never commit `.env.local`. If an API key is leaked, rotate it immediately in the provider dashboard and replace the local and Vercel environment values.
+`.env.local`은 절대 커밋하지 않습니다. 키가 노출되면 즉시 OpenAI 대시보드에서 폐기하고 새 키를 발급해야 합니다.
 
-## Local Development
+## 로컬 실행
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+브라우저에서 `http://localhost:3000`을 엽니다.
 
-## Verification
+## 검증
 
 ```bash
 npm test
 npm run build
 ```
 
-Without a safe `OPENAI_API_KEY`, the API intentionally returns a missing-key error. Add a rotated key to `.env.local` to test live text and image generation.
+## Vercel 배포
 
-## Grounding References
+1. GitHub 저장소를 Vercel에 연결합니다.
+2. Vercel Project Settings > Environment Variables에 `OPENAI_API_KEY`를 추가합니다.
+3. Production, Preview, Development 중 필요한 환경에 모두 적용합니다.
+4. 재배포합니다.
 
-The grounding packs are MVP seeds derived from these public sources and translated into local, reviewable JSON rules:
+키가 Vercel에 없으면 화면은 열리지만 생성 버튼 호출 시 서버에서 키 누락 오류가 납니다.
 
-- Ministry of Education, Korea: 2022 Revised National Curriculum announcement and MOE Notification No. 2022-33 for the national curriculum, including Science as separate volume 9. https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=040401
-- Korea Foundation for the Advancement of Science and Creativity: 2022 revised science curriculum draft/final report, used for the middle-school science area structure: 운동과 에너지, 물질, 생명, 지구와 우주, 과학과 사회. https://cdn.kosac.re.kr/files/legacy_data/jnrepo/upload/jnBrdBoard/202304/a6819baa69b640648e861c4080fba452_1682063071411.pdf
-- National Institute of Special Education: 2022 revised special-education curriculum evaluation-material overview, used to frame the need for student-matched goals and basic-curriculum support materials. https://www.nise.go.kr/field/page/vol131/sub_2_04_2.html
-- ASHA Practice Portal, Intellectual Disability: AAC has no prerequisite cognitive skill requirement; activity schedules and visual supports can support sequences, attention, transitions, and setting-appropriate behavior. https://www.asha.org/practice-portal/clinical-topics/intellectual-disability/
-- ASHA Practice Portal, Augmentative and Alternative Communication: symbol organization, symbol size, field size, sensory/motor status, language level, memory, attention, and AAC feature matching should be individualized. https://www.asha.org/Practice-Portal/Professional-Issues/Augmentative-and-Alternative-Communication/
-- CAST Universal Design for Learning: grounding for multiple means of engagement, representation, and action/expression, especially language/symbol and comprehension supports. https://www.cast.org/what-we-do/universal-design-for-learning/
-- What Works Clearinghouse, Organizing Instruction and Study to Improve Student Learning: grounding for combining graphics with verbal descriptions and connecting abstract concepts to concrete representations. https://ies.ed.gov/ncee/WWC/PracticeGuide/1
-- Autism Internet Modules, Visual Supports: grounding for using visual supports to clarify instructions, academics, social situations, and emotional/behavioral expectations. https://autisminternetmodules.org/m/1048
+## 참고 자료
 
-## Vercel Deployment
-
-Deploy the MVP on Vercel after adding the same environment variables in the Vercel project settings. Keep OpenAI keys as server-side environment variables only. Static JSON curriculum files can be deployed with the app for the MVP, while teacher review remains part of the live workflow before AAC cards are used with students.
+- 교육부, 2022 개정 교육과정 고시 및 교육부 고시 제2022-33호: https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=040401
+- 한국과학창의재단, 2022 개정 과학과 교육과정 시안/최종 자료: https://cdn.kosac.re.kr/files/legacy_data/jnrepo/upload/jnBrdBoard/202304/a6819baa69b640648e861c4080fba452_1682063071411.pdf
+- 국립특수교육원, 2022 개정 특수교육 교육과정 평가자료 개요: https://www.nise.go.kr/field/page/vol131/sub_2_04_2.html
+- ASHA Practice Portal, Intellectual Disability: https://www.asha.org/practice-portal/clinical-topics/intellectual-disability/
+- ASHA Practice Portal, Augmentative and Alternative Communication: https://www.asha.org/Practice-Portal/Professional-Issues/Augmentative-and-Alternative-Communication/
+- CAST Universal Design for Learning: https://www.cast.org/what-we-do/universal-design-for-learning/
+- What Works Clearinghouse, Organizing Instruction and Study to Improve Student Learning: https://ies.ed.gov/ncee/WWC/PracticeGuide/1
+- Autism Internet Modules, Visual Supports: https://autisminternetmodules.org/m/1048

@@ -6,6 +6,7 @@ export type StoryboardStep = {
   image_prompt: string;
   image_url?: string;
   image_style_profile?: string;
+  revision_instruction?: string;
 };
 
 type AacCardProps = {
@@ -14,6 +15,7 @@ type AacCardProps = {
   isRegenerating: boolean;
   error?: string;
   onTextChange: (value: string) => void;
+  onRevisionInstructionChange: (value: string) => void;
   onRegenerateImage: () => void;
   onDelete: () => void;
 };
@@ -24,6 +26,7 @@ export function AacCard({
   isRegenerating,
   error,
   onTextChange,
+  onRevisionInstructionChange,
   onRegenerateImage,
   onDelete,
 }: AacCardProps) {
@@ -56,6 +59,16 @@ export function AacCard({
         />
       </label>
 
+      <label className="card-editor revision-editor">
+        <span>재생성 수정 방향</span>
+        <textarea
+          value={step.revision_instruction ?? ""}
+          onChange={(event) => onRevisionInstructionChange(event.target.value)}
+          placeholder="예: 화살표를 더 크게, 배경은 비우고 잎만 크게"
+          rows={3}
+        />
+      </label>
+
       <div className="card-actions">
         <button
           className="secondary-button"
@@ -63,7 +76,7 @@ export function AacCard({
           onClick={onRegenerateImage}
           disabled={isRegenerating}
         >
-          {isRegenerating ? "그림 재생성 중..." : "그림 재생성"}
+          {isRegenerating ? "재생성 중..." : "수정 방향 반영 재생성"}
         </button>
         {step.image_style_profile ? (
           <span className="style-note">{step.image_style_profile}</span>

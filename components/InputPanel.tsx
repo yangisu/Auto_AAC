@@ -3,20 +3,24 @@
 type InputPanelProps = {
   studentProfile: string;
   scienceText: string;
+  requestedStepCount: number;
   isLoading: boolean;
   error: string | null;
   onStudentProfileChange: (value: string) => void;
   onScienceTextChange: (value: string) => void;
+  onRequestedStepCountChange: (value: number) => void;
   onGenerate: () => void;
 };
 
 export function InputPanel({
   studentProfile,
   scienceText,
+  requestedStepCount,
   isLoading,
   error,
   onStudentProfileChange,
   onScienceTextChange,
+  onRequestedStepCountChange,
   onGenerate,
 }: InputPanelProps) {
   const canGenerate =
@@ -57,13 +61,35 @@ export function InputPanel({
       </div>
 
       <div className="input-actions">
+        <div className="count-control" aria-label="생성할 AAC 카드 수">
+          <span>카드 수</span>
+          <button
+            className="step-count-button"
+            type="button"
+            disabled={requestedStepCount <= 1 || isLoading}
+            onClick={() => onRequestedStepCountChange(requestedStepCount - 1)}
+            aria-label="AAC 카드 수 줄이기"
+          >
+            -
+          </button>
+          <strong>{requestedStepCount}</strong>
+          <button
+            className="step-count-button"
+            type="button"
+            disabled={requestedStepCount >= 4 || isLoading}
+            onClick={() => onRequestedStepCountChange(requestedStepCount + 1)}
+            aria-label="AAC 카드 수 늘리기"
+          >
+            +
+          </button>
+        </div>
         <button
           className="primary-button"
           type="button"
           disabled={!canGenerate}
           onClick={onGenerate}
         >
-          {isLoading ? "생성 중..." : "AAC 초안 생성"}
+          {isLoading ? "생성 중..." : `AAC ${requestedStepCount}개 초안 생성`}
         </button>
         <p className="helper-copy">
           생성 결과는 수업 적용 전 교사가 문장, 순서, 그림 적합성을 검토해야

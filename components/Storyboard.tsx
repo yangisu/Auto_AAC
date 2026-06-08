@@ -7,6 +7,7 @@ type StoryboardProps = {
   regeneratingStep: number | null;
   regenerateErrors: Record<number, string>;
   onTextChange: (index: number, value: string) => void;
+  onRevisionInstructionChange: (index: number, value: string) => void;
   onRegenerateImage: (index: number) => void;
   onDelete: (index: number) => void;
 };
@@ -16,6 +17,7 @@ export function Storyboard({
   regeneratingStep,
   regenerateErrors,
   onTextChange,
+  onRevisionInstructionChange,
   onRegenerateImage,
   onDelete,
 }: StoryboardProps) {
@@ -39,6 +41,9 @@ export function Storyboard({
               isRegenerating={regeneratingStep === index}
               error={regenerateErrors[index]}
               onTextChange={(value) => onTextChange(index, value)}
+              onRevisionInstructionChange={(value) =>
+                onRevisionInstructionChange(index, value)
+              }
               onRegenerateImage={() => onRegenerateImage(index)}
               onDelete={() => onDelete(index)}
             />

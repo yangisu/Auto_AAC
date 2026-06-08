@@ -33,7 +33,7 @@ Non-negotiable special-education constraints:
 - Support intellectual-disability learners with simplified Korean.
 - Support emotional/behavioral needs with stable, non-surprising card flow.
 - Each AAC image prompt must express one action or concept only.
-- Return 3 or 4 steps.
+- Return exactly the number of steps requested by the teacher, from 1 to 4.
 - Mark teacher_review_required as true.
 
 Retrieved curriculum grounding:
@@ -48,12 +48,19 @@ Detected student needs: ${grounding.detectedNeeds.join(", ") || "none"}
 Return only the structured JSON requested by the schema.`;
 }
 
-export function buildUserPrompt(studentProfile: string, scienceText: string) {
+export function buildUserPrompt(
+  studentProfile: string,
+  scienceText: string,
+  requestedStepCount: number
+) {
   return `Student profile:
 ${studentProfile}
 
 Science source text:
 ${scienceText}
 
-Create a teacher-review AAC storyboard draft. Keep Korean simplified_text natural, concrete, and short.`;
+Requested AAC card count:
+${requestedStepCount}
+
+Create exactly ${requestedStepCount} teacher-review AAC storyboard card(s). Keep Korean simplified_text natural, concrete, and short.`;
 }
