@@ -1,0 +1,46 @@
+{
+  "id": "auto-aac-flat-vector-card",
+  "source": "attached AAC examples",
+  "canvas": {
+    "background": "white",
+    "frame": "rounded card frame",
+    "frameRadius": "large rounded corners",
+    "borderColors": ["blue", "green"]
+  },
+  "line": {
+    "outline": "thick black outline",
+    "weight": "heavy",
+    "joins": "rounded"
+  },
+  "rendering": {
+    "style": "simple flat vector",
+    "shading": "minimal highlight only",
+    "detailLevel": "low",
+    "colorPalette": "bright familiar colors with high contrast"
+  },
+  "composition": {
+    "conceptCount": 1,
+    "layout": "one clear focal concept centered in the card",
+    "sequenceCue": "use arrows for sequence or cause-effect",
+    "backgroundDetail": "none"
+  },
+  "constraints": [
+    "white background",
+    "thick black outline",
+    "simple flat vector",
+    "rounded card frame",
+    "blue or green border",
+    "arrows for sequence or cause-effect",
+    "one concept only",
+    "no text"
+  ],
+  "negativePrompt": [
+    "no labels",
+    "no captions",
+    "no speech bubbles",
+    "no realistic rendering",
+    "no complex scene",
+    "no crowded background",
+    "no multiple simultaneous concepts"
+  ]
+}

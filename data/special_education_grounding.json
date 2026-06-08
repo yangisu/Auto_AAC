@@ -1,0 +1,65 @@
+{
+  "locale": "ko-KR",
+  "rules": [
+    {
+      "id": "no-text-low-reading",
+      "need": "low_reading_level",
+      "title": "Low reading level or limited literacy",
+      "profileFields": ["readingLevel", "reading_level", "literacy", "communication", "aacLevel"],
+      "cues": ["읽기 어려움", "글자", "문해", "저학년", "낮음", "초급", "비문해", "low", "limited", "emergent", "pre-reader"],
+      "guidance": [
+        "Do not include written labels, captions, letters, numbers, or speech bubbles.",
+        "Use concrete objects and visible actions instead of symbolic text."
+      ],
+      "promptConstraints": ["no text", "concrete visual vocabulary", "avoid labels"]
+    },
+    {
+      "id": "single-focus-short-attention",
+      "need": "short_attention",
+      "title": "Short attention span",
+      "profileFields": ["attention", "focus", "behavior", "engagement"],
+      "cues": ["주의", "집중", "짧", "산만", "주의집중", "adhd", "short", "distract", "limited attention"],
+      "guidance": [
+        "Show one concept and one main object per card.",
+        "Remove decorative background details and competing secondary actions."
+      ],
+      "promptConstraints": ["one concept only", "minimal details", "high figure-ground contrast"]
+    },
+    {
+      "id": "arrow-cause-effect",
+      "need": "cause_effect_support",
+      "title": "Cause-effect support",
+      "profileFields": ["causeEffect", "cause_effect", "reasoning", "cognition", "learningNeeds"],
+      "cues": ["원인", "결과", "인과", "때문", "왜", "연결", "cause", "effect", "causal", "because"],
+      "guidance": [
+        "Represent cause and effect with a single thick arrow from cause to result.",
+        "Use before-after or input-output structure when the science concept changes state."
+      ],
+      "promptConstraints": ["single arrow", "clear cause-to-effect direction", "before-after if needed"]
+    },
+    {
+      "id": "concretize-abstract-science",
+      "need": "abstract_concept_support",
+      "title": "Abstract concept support",
+      "profileFields": ["abstractConcepts", "abstract_concepts", "cognition", "conceptualUnderstanding", "learningNeeds"],
+      "cues": ["추상", "개념", "상징", "보이지", "어려움", "abstract", "symbolic", "invisible", "concept"],
+      "guidance": [
+        "Anchor invisible science ideas in familiar visible examples, such as leaves, water drops, sun, magnets, arrows, or simple particles.",
+        "Avoid metaphors that require extra background knowledge."
+      ],
+      "promptConstraints": ["concrete example", "visible referent", "avoid metaphor"]
+    },
+    {
+      "id": "emotionally-neutral-predictable",
+      "need": "emotional_behavior_support",
+      "title": "Emotional and behavioral support",
+      "profileFields": ["emotionalBehaviorNeeds", "emotional_behavior_needs", "behavior", "sensory", "regulation"],
+      "cues": ["불안", "좌절", "분노", "회피", "과민", "감정", "행동", "anxiety", "frustration", "meltdown", "avoidance", "sensory"],
+      "guidance": [
+        "Use calm, predictable layouts with friendly neutral facial expressions only when a face is necessary.",
+        "Avoid danger, clutter, exaggerated emotion, punishment imagery, or startling motion cues."
+      ],
+      "promptConstraints": ["calm layout", "neutral affect", "avoid threat imagery"]
+    }
+  ]
+}
