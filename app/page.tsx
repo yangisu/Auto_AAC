@@ -220,7 +220,6 @@ export default function Home() {
             studentAnalysis={result?.student_analysis}
             curriculumLinks={result?.curriculum_links}
             rulesUsed={result?.special_education_rules_used}
-            teacherReviewRequired={result?.teacher_review_required}
             groundingDebug={result?.grounding_debug}
           />
         </div>

@@ -398,6 +398,24 @@ h2 {
   font-size: 13px;
 }
 
+.curriculum-block,
+.principles-block {
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #b9cdf3;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 24px rgba(36, 95, 201, 0.07);
+}
+
+.principles-block {
+  background: linear-gradient(180deg, #ffffff 0, var(--blue-soft) 100%);
+}
+
+.curriculum-block .toolbar-label,
+.principles-block .toolbar-label {
+  color: var(--blue);
+}
+
 .toolbar-label {
   margin: 0 0 8px;
   color: var(--muted);
@@ -455,32 +473,45 @@ h2 {
   font-weight: 800;
 }
 
+.curriculum-block .chip-list {
+  gap: 8px;
+}
+
+.curriculum-block .chip-list li {
+  padding: 8px 12px;
+  background: var(--blue-soft);
+  border-color: #9fc0f7;
+  font-size: 14px;
+  box-shadow: inset 0 0 0 1px rgba(36, 95, 201, 0.08);
+}
+
 .principle-list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
 .principle-list li {
-  padding: 10px;
-  background: var(--panel-soft);
-  border: 1px solid var(--line);
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #c5d6f5;
   border-radius: var(--radius);
+  box-shadow: 0 6px 16px rgba(27, 39, 68, 0.05);
 }
 
 .principle-list strong {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
   color: var(--foreground);
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .principle-list span {
   display: block;
   color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .preview-list li {

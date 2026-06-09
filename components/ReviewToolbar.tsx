@@ -13,7 +13,6 @@ type ReviewToolbarProps = {
   studentAnalysis?: StudentAnalysis;
   curriculumLinks?: string[];
   rulesUsed?: string[];
-  teacherReviewRequired?: boolean;
   groundingDebug?: GroundingDebug;
 };
 
@@ -149,7 +148,6 @@ export function ReviewToolbar({
   studentAnalysis,
   curriculumLinks = [],
   rulesUsed = [],
-  teacherReviewRequired,
   groundingDebug,
 }: ReviewToolbarProps) {
   const analysisEntries = Object.entries(studentAnalysis ?? {}).filter(
@@ -161,19 +159,6 @@ export function ReviewToolbar({
       <div className="review-block">
         <p className="toolbar-label">주제</p>
         <strong>{topic || "초안 생성 전"}</strong>
-      </div>
-
-      <div className="review-block">
-        <p className="toolbar-label">상태</p>
-        <span
-          className={
-            teacherReviewRequired
-              ? "status-pill status-pill-yellow"
-              : "status-pill status-pill-blue"
-          }
-        >
-          {teacherReviewRequired ? "교사 검토 필요" : "입력 대기"}
-        </span>
       </div>
 
       <div className="review-block highlight-block">
@@ -200,7 +185,7 @@ export function ReviewToolbar({
         )}
       </div>
 
-      <div className="review-block">
+      <div className="review-block curriculum-block">
         <p className="toolbar-label">교육과정 연결</p>
         {curriculumLinks.length > 0 ? (
           <ul className="chip-list">
@@ -213,7 +198,7 @@ export function ReviewToolbar({
         )}
       </div>
 
-      <div className="review-block">
+      <div className="review-block principles-block">
         <p className="toolbar-label">적용된 특수교육 원리</p>
         {rulesUsed.length > 0 ? (
           <ul className="principle-list">
