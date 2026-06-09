@@ -10,6 +10,7 @@ type InputPanelProps = {
   onScienceTextChange: (value: string) => void;
   onRequestedStepCountChange: (value: number) => void;
   onGenerate: () => void;
+  onLoadDemo: (demoId: "photosynthesis" | "water-molecule") => void;
 };
 
 export function InputPanel({
@@ -22,6 +23,7 @@ export function InputPanel({
   onScienceTextChange,
   onRequestedStepCountChange,
   onGenerate,
+  onLoadDemo,
 }: InputPanelProps) {
   const canGenerate =
     studentProfile.trim().length >= 5 &&
@@ -33,9 +35,37 @@ export function InputPanel({
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Teacher workspace</p>
-          <h1 id="input-panel-title">Auto AAC - 실시간 AAC 자동 생성 도구</h1>
+          <h1 id="input-panel-title">Auto AAC</h1>
+          <p className="panel-lead">
+            과학 원문을 학생 특성에 맞춘 실시간 AAC 카드 초안으로 분해합니다.
+          </p>
         </div>
-        <span className="status-pill status-pill-blue">초안 생성</span>
+        <span className="status-pill status-pill-blue">Human-in-the-loop</span>
+      </div>
+
+      <div className="demo-strip" aria-label="시연 예시 불러오기">
+        <div>
+          <span className="demo-label">시연 예시</span>
+          <strong>입력값을 바로 채워 발표 흐름을 유지하세요.</strong>
+        </div>
+        <div className="demo-actions">
+          <button
+            className="demo-button"
+            type="button"
+            onClick={() => onLoadDemo("photosynthesis")}
+            disabled={isLoading}
+          >
+            광합성
+          </button>
+          <button
+            className="demo-button"
+            type="button"
+            onClick={() => onLoadDemo("water-molecule")}
+            disabled={isLoading}
+          >
+            물 분자
+          </button>
+        </div>
       </div>
 
       <div className="field-grid">

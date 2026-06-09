@@ -21,6 +21,10 @@ export function Storyboard({
   onRegenerateImage,
   onDelete,
 }: StoryboardProps) {
+  function handlePrint() {
+    window.print();
+  }
+
   return (
     <section className="storyboard-panel" aria-labelledby="storyboard-title">
       <div className="panel-heading compact">
@@ -28,7 +32,17 @@ export function Storyboard({
           <p className="eyebrow">Storyboard</p>
           <h2 id="storyboard-title">AAC 카드 검토</h2>
         </div>
-        <span className="status-pill status-pill-green">교사 검토 필요</span>
+        <div className="storyboard-actions">
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={handlePrint}
+            disabled={steps.length === 0}
+          >
+            인쇄
+          </button>
+          <span className="status-pill status-pill-green">교사 검토 필요</span>
+        </div>
       </div>
 
       {steps.length > 0 ? (

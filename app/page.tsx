@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ConversionComparison } from "../components/ConversionComparison";
 import { InputPanel } from "../components/InputPanel";
 import { ReviewToolbar } from "../components/ReviewToolbar";
 import { Storyboard } from "../components/Storyboard";
@@ -25,6 +26,31 @@ type RegenerateResponse = {
   image_prompt?: string;
   image_style_profile?: string;
   error?: string;
+};
+
+type DemoId = "photosynthesis" | "water-molecule";
+
+const demoInputs: Record<
+  DemoId,
+  {
+    studentProfile: string;
+    scienceText: string;
+    requestedStepCount: number;
+  }
+> = {
+  photosynthesis: {
+    studentProfile:
+      "초등학교 2학년 수준의 어휘는 이해하지만 긴 문장과 인과관계를 어려워함. 주의집중 시간이 짧고 흰 배경의 크고 단순한 그림에 잘 반응함.",
+    scienceText:
+      "식물은 광합성을 통해 빛에너지와 물을 이용하여 생장에 필요한 양분을 만든다.",
+    requestedStepCount: 3,
+  },
+  "water-molecule": {
+    studentProfile:
+      "수용언어가 약하고 한 번에 한 가지 정보만 이해함. 추상적인 미시 개념을 어려워하며 전후 관계를 나누어 보여주면 이해가 좋아짐.",
+    scienceText: "물 분자는 산소 원자 하나와 수소 원자 두 개로 이루어져 있다.",
+    requestedStepCount: 3,
+  },
 };
 
 async function readError(response: Response) {
@@ -77,6 +103,15 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function handleLoadDemo(demoId: DemoId) {
+    const demo = demoInputs[demoId];
+    setStudentProfile(demo.studentProfile);
+    setScienceText(demo.scienceText);
+    setRequestedStepCount(demo.requestedStepCount);
+    setError(null);
+    setRegenerateErrors({});
   }
 
   function handleTextChange(index: number, value: string) {
@@ -177,6 +212,7 @@ export default function Home() {
             onScienceTextChange={setScienceText}
             onRequestedStepCountChange={setRequestedStepCount}
             onGenerate={handleGenerate}
+            onLoadDemo={handleLoadDemo}
           />
 
           <ReviewToolbar
@@ -188,6 +224,8 @@ export default function Home() {
             groundingDebug={result?.grounding_debug}
           />
         </div>
+
+        <ConversionComparison scienceText={scienceText} steps={steps} />
 
         <Storyboard
           steps={steps}
