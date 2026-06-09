@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ConversionComparison } from "../components/ConversionComparison";
 import { InputPanel } from "../components/InputPanel";
 import { ReviewToolbar } from "../components/ReviewToolbar";
 import { Storyboard } from "../components/Storyboard";
@@ -224,8 +223,6 @@ export default function Home() {
             groundingDebug={result?.grounding_debug}
           />
         </div>
-
-        <ConversionComparison scienceText={scienceText} steps={steps} />
 
         <Storyboard
           steps={steps}

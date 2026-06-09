@@ -46,7 +46,7 @@ export function InputPanel({
       <div className="demo-strip" aria-label="시연 예시 불러오기">
         <div>
           <span className="demo-label">시연 예시</span>
-          <strong>입력값을 바로 채워 발표 흐름을 유지하세요.</strong>
+          <strong>버튼 클릭 시 예시 템플릿이 입력됩니다.</strong>
         </div>
         <div className="demo-actions">
           <button

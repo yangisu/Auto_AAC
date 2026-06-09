@@ -67,15 +67,14 @@ textarea {
 
 .tool-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 380px;
+  grid-template-columns: 1fr;
   gap: 18px;
   align-items: start;
 }
 
 .input-panel,
 .review-toolbar,
-.storyboard-panel,
-.comparison-panel {
+.storyboard-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -83,13 +82,13 @@ textarea {
 }
 
 .input-panel,
-.storyboard-panel,
-.comparison-panel {
+.storyboard-panel {
   padding: 20px;
 }
 
 .review-toolbar {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
   padding: 16px;
 }
@@ -487,88 +486,8 @@ h2 {
   background: #fff;
 }
 
-.comparison-panel,
 .storyboard-panel {
   margin-top: 18px;
-}
-
-.comparison-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 14px;
-}
-
-.comparison-column {
-  min-width: 0;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.muted-comparison {
-  background: #fafafa;
-}
-
-.strong-comparison {
-  background: var(--green-soft);
-  border-color: #b9dfc2;
-}
-
-.comparison-kicker {
-  display: inline-flex;
-  margin-bottom: 10px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.comparison-column p {
-  margin: 0 0 12px;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.55;
-}
-
-.comparison-column small {
-  display: block;
-  color: var(--muted);
-  line-height: 1.45;
-}
-
-.mini-step-list {
-  display: grid;
-  gap: 8px;
-  padding: 0;
-  margin: 0 0 12px;
-  list-style: none;
-  counter-reset: mini-step;
-}
-
-.mini-step-list li {
-  position: relative;
-  padding: 9px 10px 9px 36px;
-  background: #fff;
-  border: 1px solid #c6e5cd;
-  border-radius: var(--radius);
-  font-weight: 900;
-  line-height: 1.35;
-  counter-increment: mini-step;
-}
-
-.mini-step-list li::before {
-  position: absolute;
-  top: 8px;
-  left: 9px;
-  display: inline-grid;
-  place-items: center;
-  width: 20px;
-  height: 20px;
-  color: #fff;
-  background: var(--green);
-  border-radius: 999px;
-  font-size: 11px;
-  content: counter(mini-step);
 }
 
 .storyboard-grid {
@@ -726,8 +645,8 @@ h2 {
 }
 
 @media (max-width: 1120px) {
-  .tool-grid {
-    grid-template-columns: 1fr;
+  .review-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .storyboard-grid {
@@ -741,8 +660,8 @@ h2 {
   }
 
   .field-grid,
-  .storyboard-grid,
-  .comparison-grid {
+  .review-toolbar,
+  .storyboard-grid {
     grid-template-columns: 1fr;
   }
 
@@ -784,7 +703,6 @@ h2 {
 
   .input-panel,
   .review-toolbar,
-  .comparison-panel,
   .secondary-button,
   .icon-button,
   .card-editor.revision-editor,
