@@ -37,7 +37,7 @@ export function InputPanel({
           <p className="eyebrow">Teacher workspace</p>
           <h1 id="input-panel-title">Auto AAC</h1>
           <p className="panel-lead">
-            생성용 텍스트를 학생 특성에 맞춘 실시간 AAC 카드 초안으로 분해합니다.
+            생성용 텍스트를 학생 특성에 맞춰 분해해 AAC 카드 묶음을 생성합니다.
           </p>
         </div>
         <span className="status-pill status-pill-blue">Human-in-the-loop</span>

@@ -24,43 +24,43 @@ function humanizeKey(key: string) {
 const ruleCopy: Record<string, { label: string; reason: string }> = {
   "no-text-low-reading": {
     label: "비문해/읽기 제한",
-    reason: "이미지 안의 글자를 배제해 그림 단서만으로 이해하게 합니다.",
+    reason: "글자 해독 부담을 줄이기 위해 이미지 안의 문자와 말풍선을 제외합니다.",
   },
   "single-focus-short-attention": {
     label: "짧은 주의집중",
-    reason: "한 카드에는 하나의 사물이나 행동만 남겨 시각 부담을 낮춥니다.",
+    reason: "주의가 분산되지 않도록 한 카드에 하나의 사물이나 행동만 담습니다.",
   },
   "cause-effect-visual-arrow": {
     label: "인과관계 지원",
-    reason: "원인과 결과를 분리하고 굵은 화살표로 관계를 보조합니다.",
+    reason: "원인과 결과를 따로 나누고 굵은 화살표로 관계를 보이게 합니다.",
   },
   "abstract-to-concrete-anchor": {
     label: "추상개념 구체화",
-    reason: "보이지 않는 개념을 잎, 물방울, 원자 같은 구체 상징으로 바꿉니다.",
+    reason: "추상어를 학생이 알아볼 수 있는 구체 사물과 행동으로 바꿉니다.",
   },
   "safe-neutral-affect": {
     label: "정서적 안정",
-    reason: "불안을 줄이기 위해 중립적이고 예측 가능한 그림을 유지합니다.",
+    reason: "불안을 줄이기 위해 표정과 장면을 중립적이고 예측 가능하게 제한합니다.",
   },
   "single-clause-receptive-language": {
     label: "수용언어 지원",
-    reason: "한 문장에 하나의 동사만 두어 단문 구조로 제시합니다.",
+    reason: "언어 수용이 쉽도록 한 문장에 하나의 동작만 담은 단문으로 제한합니다.",
   },
   "working-memory-three-to-four-steps": {
     label: "작업기억 부담 완화",
-    reason: "새 정보를 여러 카드로 나누어 순서대로 처리하게 합니다.",
+    reason: "한 번에 기억할 정보를 줄이기 위해 내용을 짧은 단계로 나눕니다.",
   },
   "visual-discrimination-clean-field": {
     label: "시각 변별 지원",
-    reason: "흰 배경, 큰 중심 상징, 높은 대비로 핵심을 선명하게 만듭니다.",
+    reason: "핵심 그림을 쉽게 구별하도록 흰 배경, 큰 상징, 높은 대비를 사용합니다.",
   },
   "transition-first-next-then": {
     label: "전환 예측성",
-    reason: "입력, 변화, 결과 순서로 흐름을 안정적으로 보여줍니다.",
+    reason: "다음 흐름을 예측할 수 있도록 처음, 다음, 결과 순서로 배열합니다.",
   },
   "core-vocabulary-repeat": {
     label: "핵심어휘 반복",
-    reason: "받는다, 만든다, 바뀐다 같은 쉬운 서술어를 반복합니다.",
+    reason: "표현을 익히기 쉽도록 받는다, 만든다 같은 쉬운 핵심어휘를 반복합니다.",
   },
 };
 
@@ -68,7 +68,7 @@ function explainRule(rule: string) {
   return (
     ruleCopy[rule] ?? {
       label: rule,
-      reason: "학생 특성과 교과 맥락에 맞춰 생성 제약으로 적용됩니다.",
+      reason: "학생 특성과 수업 맥락에 맞춰 문장 길이와 그림 복잡도를 제한합니다.",
     }
   );
 }
