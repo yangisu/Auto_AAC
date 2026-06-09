@@ -37,7 +37,7 @@ export function InputPanel({
           <p className="eyebrow">Teacher workspace</p>
           <h1 id="input-panel-title">Auto AAC</h1>
           <p className="panel-lead">
-            과학 원문을 학생 특성에 맞춘 실시간 AAC 카드 초안으로 분해합니다.
+            생성용 텍스트를 학생 특성에 맞춘 실시간 AAC 카드 초안으로 분해합니다.
           </p>
         </div>
         <span className="status-pill status-pill-blue">Human-in-the-loop</span>
@@ -80,11 +80,11 @@ export function InputPanel({
         </label>
 
         <label className="text-field">
-          <span>과학 원문</span>
+          <span>생성용 텍스트</span>
           <textarea
             value={scienceText}
             onChange={(event) => onScienceTextChange(event.target.value)}
-            placeholder="수업에서 다룰 과학 텍스트를 붙여 넣으세요."
+            placeholder="AAC 카드로 만들 수업 텍스트를 붙여 넣으세요."
             rows={8}
           />
         </label>

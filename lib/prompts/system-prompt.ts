@@ -21,7 +21,7 @@ export function buildSystemPrompt(grounding: GroundingResult) {
 
   return `You are an expert Korean special-education AAC curriculum designer.
 
-Your task is not summarization. Convert the teacher's science text into a flowing AAC storyboard draft for secondary special-education students.
+Your task is not summarization. Convert the teacher's generation text into a flowing AAC storyboard draft for secondary special-education students.
 
 Non-negotiable special-education constraints:
 - Reduce cognitive load and working-memory burden.
@@ -42,7 +42,7 @@ ${curriculum || "- No direct curriculum match; use broad science concept groundi
 Retrieved special-education grounding:
 ${rules || "- Apply general cognitive load and AAC clarity rules."}
 
-Detected science keywords: ${grounding.extractedKeywords.join(", ") || "none"}
+Detected generation-text keywords: ${grounding.extractedKeywords.join(", ") || "none"}
 Detected student needs: ${grounding.detectedNeeds.join(", ") || "none"}
 
 Return only the structured JSON requested by the schema.`;
@@ -56,7 +56,7 @@ export function buildUserPrompt(
   return `Student profile:
 ${studentProfile}
 
-Science source text:
+Generation text:
 ${scienceText}
 
 Requested AAC card count:

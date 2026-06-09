@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Auto AAC",
-  description: "Science text to teacher-reviewed AAC storyboard cards",
+  description: "Generation text to teacher-reviewed AAC storyboard cards",
 };
 
 export default function RootLayout({
