@@ -124,10 +124,21 @@ const ruleCopy: Record<string, { label: string; reason: string }> = {
   },
 };
 
+function normalizeRuleKey(rule: string) {
+  return rule
+    .normalize("NFKC")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_-]/g, "");
+}
+
 function explainRule(rule: string) {
+  const normalizedRule = normalizeRuleKey(rule);
+
   return (
-    ruleCopy[rule] ?? {
-      label: rule,
+    ruleCopy[normalizedRule] ?? {
+      label: humanizeKey(normalizedRule || rule),
       reason: "학생 특성과 수업 맥락에 맞춰 문장 길이와 그림 복잡도를 제한합니다.",
     }
   );

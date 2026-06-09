@@ -101,6 +101,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       ...parsed,
+      special_education_rules_used: grounding.specialEducationRules.map(
+        (rule) => rule.id,
+      ),
       teacher_review_required: true,
       steps,
       grounding_debug: {
