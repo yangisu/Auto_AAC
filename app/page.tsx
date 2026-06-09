@@ -27,7 +27,7 @@ type RegenerateResponse = {
   error?: string;
 };
 
-type DemoId = "photosynthesis" | "water-molecule";
+type DemoId = "photosynthesis" | "science-communication";
 
 const demoInputs: Record<
   DemoId,
@@ -44,10 +44,11 @@ const demoInputs: Record<
       "식물은 광합성을 통해 빛에너지와 물을 이용하여 생장에 필요한 양분을 만든다.",
     requestedStepCount: 3,
   },
-  "water-molecule": {
+  "science-communication": {
     studentProfile:
-      "수용언어가 약하고 한 번에 한 가지 정보만 이해함. 추상적인 미시 개념을 어려워하며 전후 관계를 나누어 보여주면 이해가 좋아짐.",
-    scienceText: "물 분자는 산소 원자 하나와 수소 원자 두 개로 이루어져 있다.",
+      "중학교 2학년 수준의 어휘는 이해하지만 긴 문장과 인과관계를 어려워함. 주의집중 시간이 짧고 흰 배경의 크고 단순한 그림에 잘 반응함. 과학 개념 학습 중 자신의 의사를 표현하기 위한 AAC를 원함.",
+    scienceText:
+      "이 과학 개념이 이해가 안가요, 실험 과정 중 문제가 생겼어요, 방금 설명한 개념을 제가 이야기해보고 싶어요",
     requestedStepCount: 3,
   },
 };

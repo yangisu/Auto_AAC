@@ -10,7 +10,7 @@ type InputPanelProps = {
   onScienceTextChange: (value: string) => void;
   onRequestedStepCountChange: (value: number) => void;
   onGenerate: () => void;
-  onLoadDemo: (demoId: "photosynthesis" | "water-molecule") => void;
+  onLoadDemo: (demoId: "photosynthesis" | "science-communication") => void;
 };
 
 export function InputPanel({
@@ -60,10 +60,10 @@ export function InputPanel({
           <button
             className="demo-button"
             type="button"
-            onClick={() => onLoadDemo("water-molecule")}
+            onClick={() => onLoadDemo("science-communication")}
             disabled={isLoading}
           >
-            물 분자
+            과학 수업 중 의사소통
           </button>
         </div>
       </div>
