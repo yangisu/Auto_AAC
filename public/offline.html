@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#245fc9" />
+    <title>오프라인 | Auto AAC</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f8fb;
+        color: #162033;
+      }
+
+      body {
+        display: grid;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        place-items: center;
+      }
+
+      main {
+        width: min(32rem, calc(100% - 2rem));
+        box-sizing: border-box;
+        padding: 2rem;
+        border: 1px solid #dce2ee;
+        border-radius: 1rem;
+        background: #fff;
+        box-shadow: 0 1rem 2.5rem rgb(36 95 201 / 10%);
+        text-align: center;
+      }
+
+      h1 {
+        margin: 0 0 1rem;
+        font-size: clamp(1.5rem, 6vw, 2rem);
+      }
+
+      p {
+        margin: 0 0 1.5rem;
+        line-height: 1.65;
+      }
+
+      button {
+        min-height: 44px;
+        padding: 0.75rem 1.25rem;
+        border: 0;
+        border-radius: 0.65rem;
+        background: #245fc9;
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button:focus-visible {
+        outline: 3px solid #f4b740;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>인터넷 연결이 필요합니다</h1>
+      <p>
+        Auto AAC의 AAC 카드 생성 기능은 온라인에서만 사용할 수 있습니다.
+        인터넷 연결을 확인한 뒤 다시 시도해 주세요.
+      </p>
+      <button type="button" id="retry">다시 시도</button>
+    </main>
+    <script>
+      document.getElementById("retry").addEventListener("click", function () {
+        location.reload();
+      });
+    </script>
+  </body>
+</html>

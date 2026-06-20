@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { AppFooter } from "../components/AppFooter";
+import { ServiceWorkerRegistration } from "../components/ServiceWorkerRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body>
         {children}
         <AppFooter />
+        <ServiceWorkerRegistration />
       </body>
     </html>
   );
