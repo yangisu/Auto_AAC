@@ -1,14 +1,31 @@
 import { z } from "zod";
 
+import { findDirectIdentifierKinds } from "./privacy/pii-guard";
+
+const DIRECT_IDENTIFIER_MESSAGE =
+  "학생 이름·연락처·학번 등 직접 식별정보를 제거해 주세요.";
+
 export const GenerateRequestSchema = z.object({
-  studentProfile: z.string().trim().min(5),
-  scienceText: z.string().trim().min(3),
+  studentProfile: z
+    .string()
+    .trim()
+    .min(5)
+    .max(2000)
+    .superRefine((studentProfile, context) => {
+      if (findDirectIdentifierKinds(studentProfile).length > 0) {
+        context.addIssue({
+          code: "custom",
+          message: DIRECT_IDENTIFIER_MESSAGE,
+        });
+      }
+    }),
+  scienceText: z.string().trim().min(3).max(4000),
   requestedStepCount: z.number().int().min(1).max(4).default(1),
 });
 
 export const RegenerateImageRequestSchema = z.object({
-  imagePrompt: z.string().trim().min(10),
-  revisionInstruction: z.string().trim().max(500).optional(),
+  imagePrompt: z.string().trim().min(10).max(8000),
+  revisionInstruction: z.string().trim().max(1000).optional(),
 });
 
 export const StudentAnalysisSchema = z.object({

@@ -7,6 +7,70 @@ import {
 } from "./schemas";
 
 describe("request schemas", () => {
+  it("enforces student profile and science text length limits", () => {
+    expect(
+      GenerateRequestSchema.safeParse({
+        studentProfile: "가".repeat(5),
+        scienceText: "나".repeat(3),
+      }).success,
+    ).toBe(true);
+    expect(
+      GenerateRequestSchema.safeParse({
+        studentProfile: "가".repeat(2001),
+        scienceText: "나".repeat(3),
+      }).success,
+    ).toBe(false);
+    expect(
+      GenerateRequestSchema.safeParse({
+        studentProfile: "가".repeat(5),
+        scienceText: "나".repeat(4001),
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects direct identifiers in a student profile without echoing them", () => {
+    const directIdentifier = "teacher@example.com";
+    const result = GenerateRequestSchema.safeParse({
+      studentProfile: `연락처는 ${directIdentifier}입니다`,
+      scienceText: "잎은 햇빛을 받는다.",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            path: ["studentProfile"],
+            message: "학생 이름·연락처·학번 등 직접 식별정보를 제거해 주세요.",
+          }),
+        ]),
+      );
+      expect(result.error.issues.map((issue) => issue.message).join(" ")).not.toContain(
+        directIdentifier,
+      );
+    }
+  });
+
+  it("enforces image regeneration request length limits", () => {
+    expect(
+      RegenerateImageRequestSchema.safeParse({
+        imagePrompt: "가".repeat(8000),
+        revisionInstruction: "나".repeat(1000),
+      }).success,
+    ).toBe(true);
+    expect(
+      RegenerateImageRequestSchema.safeParse({
+        imagePrompt: "가".repeat(8001),
+      }).success,
+    ).toBe(false);
+    expect(
+      RegenerateImageRequestSchema.safeParse({
+        imagePrompt: "가".repeat(10),
+        revisionInstruction: "나".repeat(1001),
+      }).success,
+    ).toBe(false);
+  });
+
   it("accepts a teacher-selected AAC card count from 1 to 4", () => {
     expect(
       GenerateRequestSchema.parse({
