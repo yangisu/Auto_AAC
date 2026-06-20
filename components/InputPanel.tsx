@@ -99,6 +99,9 @@ export function InputPanel({
         <p>
           학생 프로필과 수업 텍스트는 AAC 생성을 위해 Vercel 서버와 OpenAI로 전송됩니다. 학생 이름·학교·학번·연락처·주민등록번호·의료번호를 입력하지 마세요.
         </p>
+        <p>
+          그림 재생성 시 이미지 프롬프트와 교사의 수정 지시도 Vercel 서버와 OpenAI로 전송됩니다.
+        </p>
         <a href="/privacy">개인정보 처리 안내</a>
         <label className="privacy-checkbox">
           <input

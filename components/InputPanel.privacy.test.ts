@@ -4,6 +4,8 @@ import { InputPanel } from "./InputPanel";
 
 const disclosure =
   "학생 프로필과 수업 텍스트는 AAC 생성을 위해 Vercel 서버와 OpenAI로 전송됩니다. 학생 이름·학교·학번·연락처·주민등록번호·의료번호를 입력하지 마세요.";
+const imageRegenerationDisclosure =
+  "그림 재생성 시 이미지 프롬프트와 교사의 수정 지시도 Vercel 서버와 OpenAI로 전송됩니다.";
 
 function renderInputPanel(privacyAcknowledged: boolean) {
   return renderToStaticMarkup(
@@ -29,6 +31,7 @@ describe("InputPanel privacy acknowledgement", () => {
     const html = renderInputPanel(false);
 
     expect(html).toContain(disclosure);
+    expect(html).toContain(imageRegenerationDisclosure);
     expect(html).toContain('href="/privacy"');
     expect(html).toContain('type="checkbox"');
     expect(html).toContain("비식별 정보만 입력했음을 확인합니다.");

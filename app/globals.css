@@ -27,6 +27,8 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   min-height: 100vh;
   background:
@@ -57,7 +59,7 @@ textarea {
 }
 
 .app-shell {
-  min-height: 100vh;
+  flex: 1 0 auto;
 }
 
 .workspace {
@@ -363,6 +365,7 @@ h2 {
 }
 
 .app-footer {
+  flex: 0 0 auto;
   padding:
     20px
     calc(28px + env(safe-area-inset-right))
@@ -380,6 +383,7 @@ h2 {
 }
 
 .policy-page {
+  flex: 1 0 auto;
   width: min(840px, 100%);
   margin: 0 auto;
   padding:
@@ -848,6 +852,7 @@ h2 {
 
 @media print {
   body {
+    display: block;
     background: #fff;
   }
 

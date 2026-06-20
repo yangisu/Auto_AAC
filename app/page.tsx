@@ -106,11 +106,22 @@ export default function Home() {
     }
   }
 
+  function handleStudentProfileChange(value: string) {
+    setStudentProfile(value);
+    setPrivacyAcknowledged(false);
+  }
+
+  function handleScienceTextChange(value: string) {
+    setScienceText(value);
+    setPrivacyAcknowledged(false);
+  }
+
   function handleLoadDemo(demoId: DemoId) {
     const demo = demoInputs[demoId];
     setStudentProfile(demo.studentProfile);
     setScienceText(demo.scienceText);
     setRequestedStepCount(demo.requestedStepCount);
+    setPrivacyAcknowledged(false);
     setError(null);
     setRegenerateErrors({});
   }
@@ -210,8 +221,8 @@ export default function Home() {
             isLoading={isLoading}
             error={error}
             privacyAcknowledged={privacyAcknowledged}
-            onStudentProfileChange={setStudentProfile}
-            onScienceTextChange={setScienceText}
+            onStudentProfileChange={handleStudentProfileChange}
+            onScienceTextChange={handleScienceTextChange}
             onRequestedStepCountChange={setRequestedStepCount}
             onPrivacyAcknowledgedChange={setPrivacyAcknowledged}
             onGenerate={handleGenerate}
