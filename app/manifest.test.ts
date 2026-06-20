@@ -1,3 +1,5 @@
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
@@ -15,6 +17,7 @@ describe("PWA manifest", () => {
       display: "standalone",
       lang: "ko",
       theme_color: "#245fc9",
+      background_color: "#f7f8fb",
       categories: ["education", "productivity"],
       icons: [
         {
@@ -64,5 +67,63 @@ describe("generated PWA icons", () => {
       width: size,
       height: size,
     });
+  });
+
+  it("renders the maskable icon with fully opaque pixels", async () => {
+    const { data, info } = await sharp(
+      path.join(process.cwd(), "public", "icons", "icon-maskable-512.png"),
+    )
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+
+    const alphaValues = data.filter((_, index) => index % info.channels === 3);
+
+    expect(alphaValues.reduce((minimum, alpha) => Math.min(minimum, alpha), 255)).toBe(
+      255,
+    );
+  });
+
+  it("keeps the opaque maskable icon distinct from the transparent regular icon", async () => {
+    const iconsDirectory = path.join(process.cwd(), "public", "icons");
+    const regular = await readFile(path.join(iconsDirectory, "icon-512.png"));
+    const maskable = await readFile(
+      path.join(iconsDirectory, "icon-maskable-512.png"),
+    );
+
+    expect(maskable.equals(regular)).toBe(false);
+  });
+
+  it("reproduces identical PNG bytes in independent output directories", async () => {
+    const generatorModulePath = path.join(
+      process.cwd(),
+      "scripts",
+      "generate-pwa-icons.mjs",
+    );
+    const { generatePwaIcons } = await import(generatorModulePath);
+
+    expect(generatePwaIcons).toBeTypeOf("function");
+
+    const temporaryRoot = await mkdtemp(path.join(tmpdir(), "auto-aac-icons-"));
+    const firstDirectory = path.join(temporaryRoot, "first");
+    const secondDirectory = path.join(temporaryRoot, "second");
+
+    try {
+      await generatePwaIcons(firstDirectory);
+      await generatePwaIcons(secondDirectory);
+
+      for (const filename of [
+        "icon-192.png",
+        "icon-512.png",
+        "icon-maskable-512.png",
+      ]) {
+        const first = await readFile(path.join(firstDirectory, filename));
+        const second = await readFile(path.join(secondDirectory, filename));
+
+        expect(first.equals(second), filename).toBe(true);
+      }
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
   });
 });

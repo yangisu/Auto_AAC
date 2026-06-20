@@ -7,22 +7,35 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const iconsDirectory = path.join(projectRoot, "public", "icons");
 const source = path.join(iconsDirectory, "icon-source.svg");
 const outputs = [
-  ["icon-192.png", 192],
-  ["icon-512.png", 512],
-  ["icon-maskable-512.png", 512],
+  { filename: "icon-192.png", size: 192, maskable: false },
+  { filename: "icon-512.png", size: 512, maskable: false },
+  { filename: "icon-maskable-512.png", size: 512, maskable: true },
 ];
 
-await mkdir(iconsDirectory, { recursive: true });
+export async function generatePwaIcons(outputDirectory = iconsDirectory) {
+  await mkdir(outputDirectory, { recursive: true });
 
-for (const [filename, size] of outputs) {
-  await sharp(source, { density: 192 })
-    .resize(size, size, { fit: "fill" })
-    .png({
-      adaptiveFiltering: false,
-      compressionLevel: 9,
-      effort: 10,
-      palette: false,
-      progressive: false,
-    })
-    .toFile(path.join(iconsDirectory, filename));
+  for (const { filename, size, maskable } of outputs) {
+    let image = sharp(source, { density: 192 }).resize(size, size, {
+      fit: "fill",
+    });
+
+    if (maskable) {
+      image = image.flatten({ background: "#245fc9" });
+    }
+
+    await image
+      .png({
+        adaptiveFiltering: false,
+        compressionLevel: 9,
+        effort: 10,
+        palette: false,
+        progressive: false,
+      })
+      .toFile(path.join(outputDirectory, filename));
+  }
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await generatePwaIcons();
 }
