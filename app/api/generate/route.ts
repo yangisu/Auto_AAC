@@ -1,6 +1,9 @@
-import { NextResponse } from "next/server";
 import { zodTextFormat } from "openai/helpers/zod";
 import { retrieveGrounding } from "@/lib/grounding/retrieval";
+import {
+  jsonNoStore,
+  publicGenerationError,
+} from "@/lib/http/no-store";
 import { getOpenAIClient, hasOpenAIKey, imageModel, textModel } from "@/lib/openai";
 import { buildImagePrompt } from "@/lib/prompts/image-prompt";
 import { buildSystemPrompt, buildUserPrompt } from "@/lib/prompts/system-prompt";
@@ -25,22 +28,22 @@ function imageDataUrl(image: { b64_json?: string | null; url?: string | null }) 
 
 export async function POST(request: Request) {
   if (!hasOpenAIKey()) {
-    return NextResponse.json(
-      {
-        error:
-          "OPENAI_API_KEY is not configured. Rotate any exposed key and add a safe key to .env.local.",
-      },
-      { status: 500 }
-    );
+    return jsonNoStore(publicGenerationError(), { status: 500 });
   }
 
   const json = await request.json().catch(() => null);
   const input = GenerateRequestSchema.safeParse(json);
 
   if (!input.success) {
-    return NextResponse.json(
-      { error: "Invalid request body.", details: input.error.flatten() },
-      { status: 400 }
+    return jsonNoStore(
+      {
+        error: "Invalid request body.",
+        details: input.error.issues.map(({ path, message }) => ({
+          path,
+          message,
+        })),
+      },
+      { status: 400 },
     );
   }
 
@@ -53,6 +56,7 @@ export async function POST(request: Request) {
 
     const response = await openai.responses.parse({
       model: textModel,
+      store: false,
       input: [
         {
           role: "system",
@@ -99,7 +103,7 @@ export async function POST(request: Request) {
       })
     );
 
-    return NextResponse.json({
+    return jsonNoStore({
       ...parsed,
       special_education_rules_used: grounding.specialEducationRules.map(
         (rule) => rule.id,
@@ -113,8 +117,11 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown generation error.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const publicError = publicGenerationError();
+    console.error("AI generation failed", {
+      correlationId: publicError.correlationId,
+      errorName: error instanceof Error ? error.name : "UnknownError",
+    });
+    return jsonNoStore(publicError, { status: 500 });
   }
 }

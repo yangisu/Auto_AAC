@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { retrieveDefaultStyleProfile } from "@/lib/grounding/retrieval";
+import { jsonNoStore, publicImageError } from "@/lib/http/no-store";
 import { getOpenAIClient, hasOpenAIKey, imageModel } from "@/lib/openai";
 import { buildImagePrompt } from "@/lib/prompts/image-prompt";
 import { RegenerateImageRequestSchema } from "@/lib/schemas";
@@ -20,22 +20,22 @@ function imageDataUrl(image: { b64_json?: string | null; url?: string | null }) 
 
 export async function POST(request: Request) {
   if (!hasOpenAIKey()) {
-    return NextResponse.json(
-      {
-        error:
-          "OPENAI_API_KEY is not configured. Rotate any exposed key and add a safe key to .env.local.",
-      },
-      { status: 500 }
-    );
+    return jsonNoStore(publicImageError(), { status: 500 });
   }
 
   const json = await request.json().catch(() => null);
   const input = RegenerateImageRequestSchema.safeParse(json);
 
   if (!input.success) {
-    return NextResponse.json(
-      { error: "Invalid request body.", details: input.error.flatten() },
-      { status: 400 }
+    return jsonNoStore(
+      {
+        error: "Invalid request body.",
+        details: input.error.issues.map(({ path, message }) => ({
+          path,
+          message,
+        })),
+      },
+      { status: 400 },
     );
   }
 
@@ -56,14 +56,17 @@ export async function POST(request: Request) {
       quality: "low",
     });
 
-    return NextResponse.json({
+    return jsonNoStore({
       image_url: imageDataUrl(image.data?.[0] ?? {}),
       image_prompt: prompt,
       image_style_profile: styleProfile.id,
     });
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown image generation error.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const publicError = publicImageError();
+    console.error("AI image regeneration failed", {
+      correlationId: publicError.correlationId,
+      errorName: error instanceof Error ? error.name : "UnknownError",
+    });
+    return jsonNoStore(publicError, { status: 500 });
   }
 }
