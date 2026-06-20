@@ -1,8 +1,10 @@
 # Auto AAC Android TWA Release Design
 
-**Date:** 2026-06-20  
-**Status:** Approved for implementation planning  
-**Repository:** `yangisu/Auto_AAC`  
+**Date:** 2026-06-20
+
+**Status:** Approved for implementation planning
+
+**Repository:** `yangisu/Auto_AAC`
 **Production web app:** `https://auto-aac.vercel.app/`
 
 ## 1. Goal
