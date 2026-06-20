@@ -66,6 +66,7 @@ export default function Home() {
   const [steps, setSteps] = useState<StoryboardStep[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
   const [regeneratingStep, setRegeneratingStep] = useState<number | null>(null);
   const [regenerateErrors, setRegenerateErrors] = useState<Record<number, string>>({});
 
@@ -208,9 +209,11 @@ export default function Home() {
             requestedStepCount={requestedStepCount}
             isLoading={isLoading}
             error={error}
+            privacyAcknowledged={privacyAcknowledged}
             onStudentProfileChange={setStudentProfile}
             onScienceTextChange={setScienceText}
             onRequestedStepCountChange={setRequestedStepCount}
+            onPrivacyAcknowledgedChange={setPrivacyAcknowledged}
             onGenerate={handleGenerate}
             onLoadDemo={handleLoadDemo}
           />

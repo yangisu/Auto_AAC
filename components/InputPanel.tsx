@@ -6,9 +6,11 @@ type InputPanelProps = {
   requestedStepCount: number;
   isLoading: boolean;
   error: string | null;
+  privacyAcknowledged: boolean;
   onStudentProfileChange: (value: string) => void;
   onScienceTextChange: (value: string) => void;
   onRequestedStepCountChange: (value: number) => void;
+  onPrivacyAcknowledgedChange: (value: boolean) => void;
   onGenerate: () => void;
   onLoadDemo: (demoId: "photosynthesis" | "science-communication") => void;
 };
@@ -19,15 +21,18 @@ export function InputPanel({
   requestedStepCount,
   isLoading,
   error,
+  privacyAcknowledged,
   onStudentProfileChange,
   onScienceTextChange,
   onRequestedStepCountChange,
+  onPrivacyAcknowledgedChange,
   onGenerate,
   onLoadDemo,
 }: InputPanelProps) {
   const canGenerate =
     studentProfile.trim().length >= 5 &&
     scienceText.trim().length >= 3 &&
+    privacyAcknowledged &&
     !isLoading;
 
   return (
@@ -87,6 +92,23 @@ export function InputPanel({
             placeholder="AAC 카드로 만들 수업 텍스트를 붙여 넣으세요."
             rows={8}
           />
+        </label>
+      </div>
+
+      <div className="privacy-disclosure">
+        <p>
+          학생 프로필과 수업 텍스트는 AAC 생성을 위해 Vercel 서버와 OpenAI로 전송됩니다. 학생 이름·학교·학번·연락처·주민등록번호·의료번호를 입력하지 마세요.
+        </p>
+        <a href="/privacy">개인정보 처리 안내</a>
+        <label className="privacy-checkbox">
+          <input
+            type="checkbox"
+            checked={privacyAcknowledged}
+            onChange={(event) =>
+              onPrivacyAcknowledgedChange(event.target.checked)
+            }
+          />
+          <span>비식별 정보만 입력했음을 확인합니다.</span>
         </label>
       </div>
 

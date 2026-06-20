@@ -34,6 +34,7 @@ body {
     var(--background);
   color: var(--foreground);
   font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  overflow-wrap: anywhere;
 }
 
 button,
@@ -62,7 +63,11 @@ textarea {
 .workspace {
   width: min(1420px, 100%);
   margin: 0 auto;
-  padding: 28px;
+  padding:
+    calc(28px + env(safe-area-inset-top))
+    calc(28px + env(safe-area-inset-right))
+    28px
+    calc(28px + env(safe-area-inset-left));
 }
 
 .tool-grid {
@@ -260,6 +265,56 @@ h2 {
   margin-top: 14px;
 }
 
+.privacy-disclosure {
+  display: grid;
+  gap: 9px;
+  margin-top: 14px;
+  padding: 14px;
+  color: #263f73;
+  background: var(--blue-soft);
+  border: 1px solid #bfd2f4;
+  border-radius: var(--radius);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.privacy-disclosure p {
+  margin: 0;
+}
+
+.privacy-disclosure a,
+.app-footer a,
+.policy-card a {
+  color: var(--blue);
+  font-weight: 800;
+  text-underline-offset: 3px;
+}
+
+.privacy-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  width: fit-content;
+  max-width: 100%;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.privacy-checkbox input {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--blue);
+}
+
+.privacy-checkbox:focus-within {
+  border-radius: 4px;
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
 .count-control {
   display: inline-flex;
   align-items: center;
@@ -300,10 +355,65 @@ h2 {
 }
 
 .primary-button {
+  min-height: 48px;
   min-width: 178px;
   padding: 0 18px;
   color: #fff;
   background: var(--blue);
+}
+
+.app-footer {
+  padding:
+    20px
+    calc(28px + env(safe-area-inset-right))
+    calc(20px + env(safe-area-inset-bottom))
+    calc(28px + env(safe-area-inset-left));
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+.app-footer nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.policy-page {
+  width: min(840px, 100%);
+  margin: 0 auto;
+  padding:
+    calc(40px + env(safe-area-inset-top))
+    calc(24px + env(safe-area-inset-right))
+    40px
+    calc(24px + env(safe-area-inset-left));
+}
+
+.policy-card {
+  padding: clamp(22px, 5vw, 48px);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.policy-intro,
+.policy-card section p {
+  color: #3f4755;
+  line-height: 1.75;
+}
+
+.policy-intro {
+  margin: 16px 0 32px;
+  font-size: 16px;
+}
+
+.policy-card section + section {
+  margin-top: 30px;
+}
+
+.policy-card section p {
+  margin: 10px 0 0;
 }
 
 .secondary-button,
@@ -688,7 +798,11 @@ h2 {
 
 @media (max-width: 760px) {
   .workspace {
-    padding: 12px;
+    padding:
+      calc(12px + env(safe-area-inset-top))
+      calc(12px + env(safe-area-inset-right))
+      12px
+      calc(12px + env(safe-area-inset-left));
   }
 
   .field-grid,
@@ -726,6 +840,10 @@ h2 {
   .style-note {
     max-width: 100%;
   }
+
+  .privacy-checkbox {
+    width: 100%;
+  }
 }
 
 @media print {
@@ -742,6 +860,10 @@ h2 {
   .helper-copy,
   .error-banner,
   .card-error {
+    display: none !important;
+  }
+
+  .app-footer {
     display: none !important;
   }
 
