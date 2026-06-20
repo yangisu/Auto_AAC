@@ -1,0 +1,33 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Auto AAC",
+    short_name: "Auto AAC",
+    description: "교사가 검토하는 AAC 카드 초안 생성 도구",
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    lang: "ko",
+    theme_color: "#245fc9",
+    categories: ["education", "productivity"],
+    icons: [
+      {
+        src: "/icons/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+      {
+        src: "/icons/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+  };
+}
