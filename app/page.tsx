@@ -140,6 +140,7 @@ export default function Home() {
         stepIndex === index ? { ...step, revision_instruction: value } : step
       )
     );
+    setPrivacyAcknowledged(false);
   }
 
   function handleDelete(index: number) {
@@ -157,6 +158,10 @@ export default function Home() {
   }
 
   async function handleRegenerateImage(index: number) {
+    if (!privacyAcknowledged) {
+      return;
+    }
+
     const targetStep = steps[index];
     if (!targetStep) {
       return;
@@ -242,6 +247,7 @@ export default function Home() {
           steps={steps}
           regeneratingStep={regeneratingStep}
           regenerateErrors={regenerateErrors}
+          privacyAcknowledged={privacyAcknowledged}
           onTextChange={handleTextChange}
           onRevisionInstructionChange={handleRevisionInstructionChange}
           onRegenerateImage={handleRegenerateImage}

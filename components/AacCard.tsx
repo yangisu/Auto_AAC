@@ -13,6 +13,7 @@ type AacCardProps = {
   step: StoryboardStep;
   displayNumber: number;
   isRegenerating: boolean;
+  privacyAcknowledged: boolean;
   error?: string;
   onTextChange: (value: string) => void;
   onRevisionInstructionChange: (value: string) => void;
@@ -24,6 +25,7 @@ export function AacCard({
   step,
   displayNumber,
   isRegenerating,
+  privacyAcknowledged,
   error,
   onTextChange,
   onRevisionInstructionChange,
@@ -74,7 +76,7 @@ export function AacCard({
           className="secondary-button"
           type="button"
           onClick={onRegenerateImage}
-          disabled={isRegenerating}
+          disabled={isRegenerating || !privacyAcknowledged}
         >
           {isRegenerating ? "재생성 중..." : "수정 방향 반영 재생성"}
         </button>

@@ -22,17 +22,18 @@ import Home from "./page";
 type InputPanelCallbacks = {
   onStudentProfileChange: (value: string) => void;
   onScienceTextChange: (value: string) => void;
+  onPrivacyAcknowledgedChange: (value: boolean) => void;
   onGenerate: () => Promise<void>;
   onLoadDemo: (demoId: "photosynthesis" | "science-communication") => void;
 };
 
 type StoryboardCallbacks = {
+  onRevisionInstructionChange: (index: number, value: string) => void;
   onRegenerateImage: (index: number) => Promise<void>;
 };
 
-let setters: ReturnType<typeof vi.fn>[];
-let stateIndex: number;
-let stateOverrides: Map<number, unknown>;
+let stepsStateOverride: unknown[] | undefined;
+let falseBooleanStateOverride: boolean | undefined;
 
 function findElementByType<Props>(
   node: ReactNode,
@@ -57,35 +58,31 @@ function findElementByType<Props>(
   return null;
 }
 
-function renderHomeCallbacks() {
-  const panel = findElementByType<InputPanelCallbacks>(Home(), InputPanel);
+function renderHomeElements() {
+  const home = Home();
+  const panel = findElementByType<InputPanelCallbacks>(home, InputPanel);
   if (!panel) {
     throw new Error("InputPanel was not rendered");
   }
-  return panel.props;
-}
-
-function renderStoryboardCallbacks() {
-  const storyboard = findElementByType<StoryboardCallbacks>(Home(), Storyboard);
+  const storyboard = findElementByType<StoryboardCallbacks>(home, Storyboard);
   if (!storyboard) {
     throw new Error("Storyboard was not rendered");
   }
-  return storyboard.props;
+  return { inputPanel: panel.props, storyboard: storyboard.props };
 }
 
 describe("Home privacy acknowledgement lifetime", () => {
   beforeEach(() => {
-    setters = Array.from({ length: 10 }, () => vi.fn());
-    stateIndex = 0;
-    stateOverrides = new Map();
+    stepsStateOverride = undefined;
+    falseBooleanStateOverride = undefined;
     reactMocks.useState.mockImplementation((initialValue: unknown) => {
-      const currentIndex = stateIndex++;
-      return [
-        stateOverrides.has(currentIndex)
-          ? stateOverrides.get(currentIndex)
-          : initialValue,
-        setters[currentIndex],
-      ];
+      if (Array.isArray(initialValue) && stepsStateOverride) {
+        return [stepsStateOverride, vi.fn()];
+      }
+      if (initialValue === false && falseBooleanStateOverride !== undefined) {
+        return [falseBooleanStateOverride, vi.fn()];
+      }
+      return [initialValue, vi.fn()];
     });
   });
 
@@ -94,25 +91,26 @@ describe("Home privacy acknowledgement lifetime", () => {
   });
 
   it("clears acknowledgement when the student profile changes", () => {
-    renderHomeCallbacks().onStudentProfileChange("새 학습 특성");
+    const { inputPanel } = renderHomeElements();
+    inputPanel.onStudentProfileChange("새 학습 특성");
 
-    expect(setters[0]).toHaveBeenCalledWith("새 학습 특성");
-    expect(setters[7]).toHaveBeenCalledWith(false);
+    expect(inputPanel.onPrivacyAcknowledgedChange).toHaveBeenCalledWith(false);
   });
 
   it("clears acknowledgement when the science text changes", () => {
-    renderHomeCallbacks().onScienceTextChange("새 수업 텍스트");
+    const { inputPanel } = renderHomeElements();
+    inputPanel.onScienceTextChange("새 수업 텍스트");
 
-    expect(setters[1]).toHaveBeenCalledWith("새 수업 텍스트");
-    expect(setters[7]).toHaveBeenCalledWith(false);
+    expect(inputPanel.onPrivacyAcknowledgedChange).toHaveBeenCalledWith(false);
   });
 
   it.each(["photosynthesis", "science-communication"] as const)(
     "clears acknowledgement when loading the %s demo",
     (demoId) => {
-      renderHomeCallbacks().onLoadDemo(demoId);
+      const { inputPanel } = renderHomeElements();
+      inputPanel.onLoadDemo(demoId);
 
-      expect(setters[7]).toHaveBeenCalledWith(false);
+      expect(inputPanel.onPrivacyAcknowledgedChange).toHaveBeenCalledWith(false);
     },
   );
 
@@ -132,9 +130,42 @@ describe("Home privacy acknowledgement lifetime", () => {
   ])("preserves acknowledgement after $name", async ({ response }) => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
 
-    await renderHomeCallbacks().onGenerate();
+    const { inputPanel } = renderHomeElements();
+    await inputPanel.onGenerate();
 
-    expect(setters[7]).not.toHaveBeenCalled();
+    expect(inputPanel.onPrivacyAcknowledgedChange).not.toHaveBeenCalled();
+  });
+
+  it("clears acknowledgement when a revision instruction changes", () => {
+    stepsStateOverride = [
+      {
+        step_number: 1,
+        simplified_text: "잎이 햇빛을 받는다.",
+        image_prompt: "a leaf receives sunlight",
+      },
+    ];
+    const { inputPanel, storyboard } = renderHomeElements();
+
+    storyboard.onRevisionInstructionChange(0, "화살표를 더 크게");
+
+    expect(inputPanel.onPrivacyAcknowledgedChange).toHaveBeenCalledWith(false);
+  });
+
+  it("does not request image regeneration without acknowledgement", async () => {
+    stepsStateOverride = [
+      {
+        step_number: 1,
+        simplified_text: "잎이 햇빛을 받는다.",
+        image_prompt: "a leaf receives sunlight",
+      },
+    ];
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { storyboard } = renderHomeElements();
+    await storyboard.onRegenerateImage(0);
+
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -151,17 +182,19 @@ describe("Home privacy acknowledgement lifetime", () => {
       },
     },
   ])("preserves acknowledgement after $name", async ({ response }) => {
-    stateOverrides.set(4, [
+    stepsStateOverride = [
       {
         step_number: 1,
         simplified_text: "잎이 햇빛을 받는다.",
         image_prompt: "a leaf receives sunlight",
       },
-    ]);
+    ];
+    falseBooleanStateOverride = true;
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response));
 
-    await renderStoryboardCallbacks().onRegenerateImage(0);
+    const { inputPanel, storyboard } = renderHomeElements();
+    await storyboard.onRegenerateImage(0);
 
-    expect(setters[7]).not.toHaveBeenCalled();
+    expect(inputPanel.onPrivacyAcknowledgedChange).not.toHaveBeenCalled();
   });
 });

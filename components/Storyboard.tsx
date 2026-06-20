@@ -6,6 +6,7 @@ type StoryboardProps = {
   steps: StoryboardStep[];
   regeneratingStep: number | null;
   regenerateErrors: Record<number, string>;
+  privacyAcknowledged: boolean;
   onTextChange: (index: number, value: string) => void;
   onRevisionInstructionChange: (index: number, value: string) => void;
   onRegenerateImage: (index: number) => void;
@@ -16,6 +17,7 @@ export function Storyboard({
   steps,
   regeneratingStep,
   regenerateErrors,
+  privacyAcknowledged,
   onTextChange,
   onRevisionInstructionChange,
   onRegenerateImage,
@@ -53,6 +55,7 @@ export function Storyboard({
               step={step}
               displayNumber={index + 1}
               isRegenerating={regeneratingStep === index}
+              privacyAcknowledged={privacyAcknowledged}
               error={regenerateErrors[index]}
               onTextChange={(value) => onTextChange(index, value)}
               onRevisionInstructionChange={(value) =>
