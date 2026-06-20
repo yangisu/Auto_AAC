@@ -14,9 +14,25 @@ describe("findDirectIdentifierKinds", () => {
   it.each([
     ["teacher@example.com", "email"],
     ["010-1234-5678", "phone"],
-    ["123456-1234567", "resident_registration_number"],
     ["학번: 20260123", "student_number"],
   ] as const)("classifies %s as %s", (text, expectedKind) => {
     expect(findDirectIdentifierKinds(text)).toEqual([expectedKind]);
   });
+
+  it.each([
+    "123456-1234567",
+    "123456 1234567",
+    "1234561234567",
+  ])("classifies resident registration number format %s", (text) => {
+    expect(findDirectIdentifierKinds(text)).toEqual([
+      "resident_registration_number",
+    ]);
+  });
+
+  it.each(["학생 번호: 20260123", `학번: ${"9".repeat(13)}`])(
+    "classifies labeled student number format %s",
+    (text) => {
+      expect(findDirectIdentifierKinds(text)).toEqual(["student_number"]);
+    },
+  );
 });
