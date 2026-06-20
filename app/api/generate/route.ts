@@ -28,7 +28,12 @@ function imageDataUrl(image: { b64_json?: string | null; url?: string | null }) 
 
 export async function POST(request: Request) {
   if (!hasOpenAIKey()) {
-    return jsonNoStore(publicGenerationError(), { status: 500 });
+    const publicError = publicGenerationError();
+    console.error("AI generation configuration error", {
+      correlationId: publicError.correlationId,
+      errorName: "ConfigurationError",
+    });
+    return jsonNoStore(publicError, { status: 500 });
   }
 
   const json = await request.json().catch(() => null);
