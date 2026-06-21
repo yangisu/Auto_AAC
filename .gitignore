@@ -9,3 +9,14 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 .worktrees
+test-results/
+playwright-report/
+android/.gradle/
+android/local.properties
+android/**/build/
+android/*.apk
+android/*.aab
+android/**/*.jks
+android/**/*.keystore
+android/**/key.properties
+android/**/*service-account*.json
