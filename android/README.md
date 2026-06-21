@@ -11,11 +11,18 @@ buildable when the signing environment variables are unset. Run from this direct
 The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. `bundleRelease` writes
 the bundle to `app/build/outputs/bundle/release/app-release.aab`.
 
-To build a signed release, set all four variables in the same PowerShell session. The
-password prompts below do not echo their input:
+To build a signed release, set `JAVA_HOME` to the JDK 17 installation directory and set all
+four signing variables in the same PowerShell session. The password prompts below do not
+echo their input:
 
 ```powershell
 try {
+    if (-not $env:JAVA_HOME) { throw "JAVA_HOME must point to JDK 17." }
+    $jarsigner = Join-Path $env:JAVA_HOME "bin\jarsigner.exe"
+    $keytool = Join-Path $env:JAVA_HOME "bin\keytool.exe"
+    if (-not (Test-Path -LiteralPath $jarsigner)) { throw "jarsigner.exe was not found under JAVA_HOME." }
+    if (-not (Test-Path -LiteralPath $keytool)) { throw "keytool.exe was not found under JAVA_HOME." }
+
     $env:AUTO_AAC_UPLOAD_KEYSTORE = Read-Host "Absolute upload keystore path"
     $env:AUTO_AAC_UPLOAD_KEY_ALIAS = Read-Host "Upload key alias"
     $storePassword = Read-Host "Upload keystore password" -AsSecureString
@@ -27,7 +34,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "Release bundle build failed." }
 
     $bundlePath = ".\app\build\outputs\bundle\release\app-release.aab"
-    $verificationOutput = & jarsigner -verify -verbose -certs $bundlePath 2>&1
+    $verificationOutput = & $jarsigner -verify -verbose -certs $bundlePath 2>&1
     $jarsignerExitCode = $LASTEXITCODE
     $verificationText = $verificationOutput -join [Environment]::NewLine
     $verificationOutput | Write-Output
@@ -37,7 +44,7 @@ try {
         throw "Release bundle signature verification failed."
     }
 
-    keytool -list -v -keystore $env:AUTO_AAC_UPLOAD_KEYSTORE `
+    & $keytool -list -v -keystore $env:AUTO_AAC_UPLOAD_KEYSTORE `
         -alias $env:AUTO_AAC_UPLOAD_KEY_ALIAS `
         -storepass:env AUTO_AAC_UPLOAD_STORE_PASSWORD
     if ($LASTEXITCODE -ne 0) { throw "Upload certificate inspection failed." }

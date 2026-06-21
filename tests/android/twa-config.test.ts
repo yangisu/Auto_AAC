@@ -267,7 +267,19 @@ describe("Android TWA release configuration", () => {
       expect(readme).toContain(`$env:${name}`);
     }
     expect(readme).toContain(".\\gradlew.bat clean :app:bundleRelease");
-    expect(readme).toMatch(/jarsigner\s+-verify/);
+    expect(readme).toMatch(/JAVA_HOME.*JDK 17/i);
+    expect(readme).toMatch(
+      /\$jarsigner\s*=\s*Join-Path\s+\$env:JAVA_HOME\s+["']bin\\jarsigner\.exe["']/,
+    );
+    expect(readme).toMatch(
+      /\$keytool\s*=\s*Join-Path\s+\$env:JAVA_HOME\s+["']bin\\keytool\.exe["']/,
+    );
+    expect(readme).toMatch(/Test-Path\s+-LiteralPath\s+\$jarsigner/);
+    expect(readme).toMatch(/Test-Path\s+-LiteralPath\s+\$keytool/);
+    expect(readme).toMatch(/&\s+\$jarsigner\s+-verify/);
+    expect(readme).toMatch(/&\s+\$keytool\s+-list\s+-v/);
+    expect(readme).not.toMatch(/^\s*jarsigner\s+-verify/gm);
+    expect(readme).not.toMatch(/^\s*keytool\s+-list/gm);
     expect(readme).toMatch(/\$verificationText\s+-match\s+["']jar is unsigned["']/i);
     expect(readme).toMatch(/\$verificationText\s+-notmatch\s+["']jar verified["']/i);
     expect(readme).toMatch(/keytool\s+-list\s+-v/);
