@@ -83,11 +83,58 @@ describe("Android TWA release configuration", () => {
     );
     expect(new Set(vercelHosts)).toEqual(new Set(["auto-aac.vercel.app"]));
     expect(trackedConfig).not.toMatch(/BILLING|ACCESS_(?:COARSE|FINE)_LOCATION|POST_NOTIFICATIONS/);
-    expect(trackedConfig).not.toMatch(/storePassword|keyPassword|\.jks|\.keystore|[A-Za-z]:\\/i);
+    expect(trackedConfig).not.toMatch(/(?:storePassword|keyPassword|keyAlias)\s+["'][^"']+["']/i);
+    expect(trackedConfig).not.toMatch(/storeFile\s+file\s*\(\s*["'][^"']+["']\s*\)/i);
+    expect(trackedConfig).not.toMatch(/["'][^"']*\.(?:jks|keystore)["']|[A-Za-z]:\\/i);
 
     for (const file of files) {
       expect(file).not.toMatch(/\.(?:jks|keystore|apk|aab)$/i);
       expect(file).not.toMatch(/key\.properties$/i);
     }
+  });
+
+  test("configures release signing from exactly the four upload-key environment variables", () => {
+    const appGradle = read("android/app/build.gradle");
+    const environmentVariables = [
+      ...appGradle.matchAll(/System\.getenv\(\s*["']([^"']+)["']\s*\)/g),
+    ].map(([, name]) => name);
+
+    expect(environmentVariables).toEqual([
+      "AUTO_AAC_UPLOAD_KEYSTORE",
+      "AUTO_AAC_UPLOAD_STORE_PASSWORD",
+      "AUTO_AAC_UPLOAD_KEY_ALIAS",
+      "AUTO_AAC_UPLOAD_KEY_PASSWORD",
+    ]);
+    expect(appGradle).toMatch(
+      /def hasReleaseSigning\s*=\s*releaseSigning\.values\(\)\.every\s*\{\s*it\?\.trim\(\)\s*\}/,
+    );
+    expect(appGradle).toMatch(
+      /signingConfigs\s*\{\s*if\s*\(hasReleaseSigning\)\s*\{\s*release\s*\{/s,
+    );
+    expect(appGradle).toMatch(/storeFile\s+file\(releaseSigning\.keystore\)/);
+    expect(appGradle).toMatch(/storePassword\s+releaseSigning\.storePassword/);
+    expect(appGradle).toMatch(/keyAlias\s+releaseSigning\.keyAlias/);
+    expect(appGradle).toMatch(/keyPassword\s+releaseSigning\.keyPassword/);
+    expect(appGradle).toMatch(
+      /buildTypes\s*\{\s*release\s*\{[\s\S]*?if\s*\(hasReleaseSigning\)\s*\{\s*signingConfig\s+signingConfigs\.release\s*\}/,
+    );
+  });
+
+  test("documents signed release builds and upload-certificate verification", () => {
+    const readme = read("android/README.md");
+
+    for (const name of [
+      "AUTO_AAC_UPLOAD_KEYSTORE",
+      "AUTO_AAC_UPLOAD_STORE_PASSWORD",
+      "AUTO_AAC_UPLOAD_KEY_ALIAS",
+      "AUTO_AAC_UPLOAD_KEY_PASSWORD",
+    ]) {
+      expect(readme).toContain(`$env:${name}`);
+    }
+    expect(readme).toContain(".\\gradlew.bat clean :app:bundleRelease");
+    expect(readme).toMatch(/jarsigner\s+-verify/);
+    expect(readme).toMatch(/outside Git/i);
+    expect(readme).toMatch(/back(?:ed)? up securely/i);
+    expect(readme).toMatch(/Play App Signing certificate.*upload certificate/is);
   });
 });

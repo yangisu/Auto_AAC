@@ -50,6 +50,14 @@ def twaManifest = [
     orientation: 'default',
 ]
 
+def releaseSigning = [
+    keystore: System.getenv('AUTO_AAC_UPLOAD_KEYSTORE'),
+    storePassword: System.getenv('AUTO_AAC_UPLOAD_STORE_PASSWORD'),
+    keyAlias: System.getenv('AUTO_AAC_UPLOAD_KEY_ALIAS'),
+    keyPassword: System.getenv('AUTO_AAC_UPLOAD_KEY_PASSWORD'),
+]
+def hasReleaseSigning = releaseSigning.values().every { it?.trim() }
+
 android {
     compileSdkVersion 35
     namespace "com.yangisu.autoaac"
@@ -150,9 +158,22 @@ android {
 
 
     }
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(releaseSigning.keystore)
+                storePassword releaseSigning.storePassword
+                keyAlias releaseSigning.keyAlias
+                keyPassword releaseSigning.keyPassword
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
