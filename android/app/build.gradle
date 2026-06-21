@@ -50,13 +50,26 @@ def twaManifest = [
     orientation: 'default',
 ]
 
+def releaseSigningEnvironmentVariables = [
+    'AUTO_AAC_UPLOAD_KEYSTORE',
+    'AUTO_AAC_UPLOAD_STORE_PASSWORD',
+    'AUTO_AAC_UPLOAD_KEY_ALIAS',
+    'AUTO_AAC_UPLOAD_KEY_PASSWORD',
+]
 def releaseSigning = [
     keystore: System.getenv('AUTO_AAC_UPLOAD_KEYSTORE'),
     storePassword: System.getenv('AUTO_AAC_UPLOAD_STORE_PASSWORD'),
     keyAlias: System.getenv('AUTO_AAC_UPLOAD_KEY_ALIAS'),
     keyPassword: System.getenv('AUTO_AAC_UPLOAD_KEY_PASSWORD'),
 ]
-def hasReleaseSigning = releaseSigning.values().every { it?.trim() }
+def releaseSigningValueStates = releaseSigning.values().collect { value -> value?.trim() as boolean }
+def hasAnyReleaseSigning = releaseSigningValueStates.any()
+def hasReleaseSigning = releaseSigningValueStates.every()
+
+if (hasAnyReleaseSigning && !hasReleaseSigning) {
+    throw new GradleException('Android release signing requires all four environment variables: ' +
+            releaseSigningEnvironmentVariables.join(', '))
+}
 
 android {
     compileSdkVersion 35
