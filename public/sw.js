@@ -1,4 +1,4 @@
-const CACHE_NAME = "auto-aac-shell-v1";
+const CACHE_NAME = "auto-aac-shell-v2";
 const SHELL_CACHE_PREFIX = "auto-aac-shell-";
 const OFFLINE_URL = "/offline.html";
 const OPTIONAL_PRECACHE_URLS = [
@@ -11,9 +11,9 @@ const OPTIONAL_PRECACHE_URLS = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      await cache.add(OFFLINE_URL);
+      await precacheAsset(cache, OFFLINE_URL);
       await Promise.allSettled(
-        OPTIONAL_PRECACHE_URLS.map((url) => cache.add(url)),
+        OPTIONAL_PRECACHE_URLS.map((url) => precacheAsset(cache, url)),
       );
     }),
   );
@@ -64,6 +64,15 @@ async function offlineResponse() {
 function hasExpectedContentType(pathname, contentType) {
   const mimeType = contentType.split(";", 1)[0].trim().toLowerCase();
 
+  if (pathname === OFFLINE_URL) {
+    return mimeType === "text/html";
+  }
+  if (pathname === "/manifest.webmanifest") {
+    return (
+      mimeType === "application/manifest+json" ||
+      mimeType === "application/json"
+    );
+  }
   if (pathname.startsWith("/icons/")) {
     return mimeType.startsWith("image/");
   }
@@ -105,7 +114,7 @@ function hasExpectedContentType(pathname, contentType) {
   return false;
 }
 
-function canCacheRuntimeResponse(requestUrl, response) {
+function canCacheResponse(requestUrl, response) {
   if (
     response.status !== 200 ||
     response.redirected ||
@@ -131,6 +140,17 @@ function canCacheRuntimeResponse(requestUrl, response) {
   );
 }
 
+async function precacheAsset(cache, url) {
+  const requestUrl = new URL(url, self.location.origin);
+  const response = await fetch(url);
+
+  if (!canCacheResponse(requestUrl, response)) {
+    throw new Error(`Unsafe precache response for ${url}`);
+  }
+
+  await cache.put(url, response.clone());
+}
+
 async function cacheFirstAsset(request, requestUrl) {
   let cache;
   try {
@@ -144,7 +164,7 @@ async function cacheFirstAsset(request, requestUrl) {
   }
 
   const networkResponse = await fetch(request);
-  if (cache && canCacheRuntimeResponse(requestUrl, networkResponse)) {
+  if (cache && canCacheResponse(requestUrl, networkResponse)) {
     try {
       await cache.put(request, networkResponse.clone());
     } catch {

@@ -12,6 +12,7 @@ type WorkerEvent = {
 type WorkerHarness = {
   cache: {
     add: ReturnType<typeof vi.fn>;
+    addAll: ReturnType<typeof vi.fn>;
     match: ReturnType<typeof vi.fn>;
     put: ReturnType<typeof vi.fn>;
   };
@@ -43,7 +44,13 @@ function networkResponse(
 ): Response {
   const contentType =
     overrides.contentType ??
-    (pathname.endsWith(".png") ? "image/png" : "application/javascript");
+    (pathname === "/offline.html"
+      ? "text/html"
+      : pathname === "/manifest.webmanifest"
+        ? "application/manifest+json"
+        : pathname.endsWith(".png")
+          ? "image/png"
+          : "application/javascript");
   const status = overrides.status ?? 200;
   const response = new Response(status === 204 ? null : "network", {
     headers: { "content-type": contentType },
@@ -62,6 +69,7 @@ async function createWorkerHarness(): Promise<WorkerHarness> {
   const listeners = new Map<string, (event: WorkerEvent) => void>();
   const cache = {
     add: vi.fn().mockResolvedValue(undefined),
+    addAll: vi.fn().mockResolvedValue(undefined),
     match: vi.fn().mockResolvedValue(undefined),
     put: vi.fn().mockResolvedValue(undefined),
   };
@@ -71,8 +79,11 @@ async function createWorkerHarness(): Promise<WorkerHarness> {
     match: vi.fn().mockResolvedValue(undefined),
     open: vi.fn().mockResolvedValue(cache),
   };
-  const fetch = vi.fn().mockImplementation((requested: Request) => {
-    const pathname = new URL(requested.url).pathname;
+  const fetch = vi.fn().mockImplementation((requested: Request | string) => {
+    const pathname = new URL(
+      typeof requested === "string" ? requested : requested.url,
+      "https://auto-aac.test",
+    ).pathname;
     return Promise.resolve(networkResponse(pathname));
   });
   const claim = vi.fn().mockResolvedValue(undefined);
@@ -118,6 +129,17 @@ function request(pathname: string, init?: RequestInit): Request {
   return new Request(`https://auto-aac.test${pathname}`, init);
 }
 
+function requestedPath(requested: Request | string): string {
+  return new URL(
+    typeof requested === "string" ? requested : requested.url,
+    "https://auto-aac.test",
+  ).pathname;
+}
+
+function cachedPaths(worker: WorkerHarness): string[] {
+  return worker.cache.put.mock.calls.map(([key]) => requestedPath(key));
+}
+
 describe("privacy-safe service worker", () => {
   let worker: WorkerHarness;
 
@@ -129,13 +151,25 @@ describe("privacy-safe service worker", () => {
     const event = worker.dispatch("install");
     await event.waitUntil.mock.calls[0][0];
 
-    expect(worker.cache.add.mock.calls.map(([url]) => url)).toEqual([
+    expect(worker.fetch.mock.calls.map(([url]) => requestedPath(url))).toEqual([
       "/offline.html",
       "/manifest.webmanifest",
       "/icons/icon-192.png",
       "/icons/icon-512.png",
       "/icons/icon-maskable-512.png",
     ]);
+    expect(cachedPaths(worker).sort()).toEqual(
+      [
+        "/offline.html",
+        "/manifest.webmanifest",
+        "/icons/icon-192.png",
+        "/icons/icon-512.png",
+        "/icons/icon-maskable-512.png",
+      ].sort(),
+    );
+    expect(worker.cache.add).not.toHaveBeenCalled();
+    expect(worker.cache.addAll).not.toHaveBeenCalled();
+    expect(worker.caches.open).toHaveBeenCalledWith("auto-aac-shell-v2");
   });
 
   it("does not force a waiting worker to activate or claim existing clients", async () => {
@@ -149,16 +183,57 @@ describe("privacy-safe service worker", () => {
   });
 
   it("allows optional precache failures without failing installation", async () => {
-    worker.cache.add.mockImplementation((url: string) =>
-      url === "/manifest.webmanifest"
+    worker.fetch.mockImplementation((requested: Request | string) =>
+      requestedPath(requested) === "/manifest.webmanifest"
         ? Promise.reject(new Error("missing optional asset"))
-        : Promise.resolve(undefined),
+        : Promise.resolve(networkResponse(requestedPath(requested))),
     );
 
     const event = worker.dispatch("install");
 
     await expect(event.waitUntil.mock.calls[0][0]).resolves.toBeUndefined();
-    expect(worker.cache.add).toHaveBeenCalledTimes(5);
+    expect(worker.fetch).toHaveBeenCalledTimes(5);
+    expect(cachedPaths(worker)).not.toContain("/manifest.webmanifest");
+  });
+
+  it.each([
+    ["redirected", { redirected: true }],
+    ["wrong content", { contentType: "text/html" }],
+    ["wrong final URL", { url: "https://auto-aac.test/login" }],
+  ])("does not precache an optional %s response", async (_label, overrides) => {
+    worker.fetch.mockImplementation((requested: Request | string) => {
+      const pathname = requestedPath(requested);
+      return Promise.resolve(
+        networkResponse(
+          pathname,
+          pathname === "/manifest.webmanifest" ? overrides : {},
+        ),
+      );
+    });
+
+    const event = worker.dispatch("install");
+    await expect(event.waitUntil.mock.calls[0][0]).resolves.toBeUndefined();
+
+    expect(cachedPaths(worker)).not.toContain("/manifest.webmanifest");
+    expect(cachedPaths(worker)).toContain("/offline.html");
+  });
+
+  it("fails installation without caching an invalid essential offline response", async () => {
+    worker.fetch.mockImplementation((requested: Request | string) => {
+      const pathname = requestedPath(requested);
+      return Promise.resolve(
+        networkResponse(pathname, {
+          contentType: pathname === "/offline.html" ? "text/plain" : undefined,
+        }),
+      );
+    });
+
+    const event = worker.dispatch("install");
+
+    await expect(event.waitUntil.mock.calls[0][0]).rejects.toThrow(
+      "Unsafe precache response for /offline.html",
+    );
+    expect(worker.cache.put).not.toHaveBeenCalled();
   });
 
   it("does not intercept non-GET requests", () => {
@@ -282,7 +357,7 @@ describe("privacy-safe service worker", () => {
     const response = await event.respondWith.mock.calls[0][0];
 
     expect(worker.fetch).toHaveBeenCalledWith(navigation);
-    expect(worker.caches.open).toHaveBeenCalledWith("auto-aac-shell-v1");
+    expect(worker.caches.open).toHaveBeenCalledWith("auto-aac-shell-v2");
     expect(worker.cache.match).toHaveBeenCalledWith("/offline.html");
     expect(worker.caches.match).not.toHaveBeenCalled();
     expect(response).toBe(offline);
@@ -313,14 +388,18 @@ describe("privacy-safe service worker", () => {
     worker.caches.keys.mockResolvedValueOnce([
       "auto-aac-shell-v0",
       "auto-aac-shell-v1",
+      "auto-aac-shell-v2",
       "other-app-cache",
     ]);
 
     const event = worker.dispatch("activate");
     await event.waitUntil.mock.calls[0][0];
 
-    expect(worker.caches.delete).toHaveBeenCalledTimes(1);
-    expect(worker.caches.delete).toHaveBeenCalledWith("auto-aac-shell-v0");
+    expect(worker.caches.delete).toHaveBeenCalledTimes(2);
+    expect(worker.caches.delete.mock.calls.map(([name]) => name)).toEqual([
+      "auto-aac-shell-v0",
+      "auto-aac-shell-v1",
+    ]);
   });
 });
 
