@@ -136,7 +136,7 @@ describe("Home privacy acknowledgement lifetime", () => {
     expect(inputPanel.onPrivacyAcknowledgedChange).not.toHaveBeenCalled();
   });
 
-  it("clears acknowledgement when a revision instruction changes", () => {
+  it("preserves acknowledgement when a revision instruction changes", () => {
     stepsStateOverride = [
       {
         step_number: 1,
@@ -148,7 +148,7 @@ describe("Home privacy acknowledgement lifetime", () => {
 
     storyboard.onRevisionInstructionChange(0, "화살표를 더 크게");
 
-    expect(inputPanel.onPrivacyAcknowledgedChange).toHaveBeenCalledWith(false);
+    expect(inputPanel.onPrivacyAcknowledgedChange).not.toHaveBeenCalled();
   });
 
   it("does not request image regeneration without acknowledgement", async () => {

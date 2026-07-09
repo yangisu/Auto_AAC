@@ -148,6 +148,12 @@ describe("POST /api/regenerate-image privacy controls", () => {
     expect(body.image_url).toBe(
       "data:image/png;base64,regenerated-image",
     );
-    expect(openaiMocks.imagesGenerate).toHaveBeenCalledOnce();
+    expect(openaiMocks.imagesGenerate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prompt: expect.stringContaining(
+          "Teacher revision direction: 화살표를 크게 표시해 주세요",
+        ),
+      }),
+    );
   });
 });

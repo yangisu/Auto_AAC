@@ -140,7 +140,6 @@ export default function Home() {
         stepIndex === index ? { ...step, revision_instruction: value } : step
       )
     );
-    setPrivacyAcknowledged(false);
   }
 
   function handleDelete(index: number) {
